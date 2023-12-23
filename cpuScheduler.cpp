@@ -6,23 +6,28 @@
 #include <string.h>
 
 using namespace std;
-//void readFile(File *f,char*inpuFile)
-//{
-//	char c;
-//	fp=fopen(inpuFile,"r");
-//	c=fgetc(fp);
-//	printf(%c,c);
-//}
-char inputFile[20],outputFile[20];
+
+char inputFile[100],outputFile[100];
 void Read(char IOpath[] );
 void logo();
 void logo1();
+//void CheckInputFile(FILE*f){
+//	f=fopen(inputFile,"r");
+//				char checkEmpty;
+//				checkEmpty=fgetc(f);
+//				if (checkEmpty==NULL)
+//					{
+//						printf("the input file is empty, try agian");
+//				 		exit(1);
+//					}	
+//
+//}
+void FCFS(FILE*f);
 int main(int argc ,char * argv[])
 {
 	FILE *f;
 	int option=0;
-	char*inputFile=NULL;
-	char*outputFile=NULL;
+	char*inputFile=NULL,*outputFile=NULL;
 	while((option=getopt(argc,argv,"f:o:"))!=-1){
 		switch(option)
 		{
@@ -57,24 +62,26 @@ int main(int argc ,char * argv[])
 				 	printf("try agian use -o[output file]");
 				 	exit(1);
 				 }
-				 
-
+				 		//check if the input file is empty
+				 		//CheckInputFile(f);
+				
+				
 int choise;
 printf("\n\n\n");
 logo1();
-
 bool end =false;
-char schedulingMethod [100]="none";  
-char Preemptivemethod [100]="Preemptive";                              
+char schedulingMethod [100]="none",Preemptivemethod [100]="Preemptive";
+             f=fopen(inputFile,"r");                  
 while (end==false){
                                                                                                                                                                                                                                                                         
-printf("1)Scheduling Method(%s)\n2)Preemptive Mode(%s)\n3)Show Result\n4)End Program\nOption>",schedulingMethod,Preemptivemethod);
+printf("\n1)Scheduling Method(%s)\n2)Preemptive Mode(%s)\n3)Show Result\n4)End Program\nOption>",schedulingMethod,Preemptivemethod);
 scanf("%d",&choise);
-int method=0;
-bool back=false;
-bool change = false;
-char c;
-int columns=0;
+int method=0,columns=0;
+bool back=false;//,change = false;
+int proc=0,count=1;
+			char c;
+int times [] ={0,1,1,2,3};
+
 switch (choise)
 {
 	case 1:
@@ -83,7 +90,6 @@ switch (choise)
 		printf("\nplese select one of the methods below :\n");
 		printf("(1) First Come, First Served Scheduling\n(2) Shortest-Job-First Scheduling\n(3)Priority Scheduling\n(4)Round-Robin Scheduling\n(5)Back\nOption>>");
 		scanf("%d",&method);
-		//printf("you selectedmethod %d",method);
 		switch (method)
 		{
 			case 1:
@@ -135,6 +141,11 @@ switch (choise)
 	logo1();
 	break;
 	case 3:
+			FCFS(f);
+			
+				
+			
+
 	break;
 	
 	case 4:
@@ -149,7 +160,7 @@ switch (choise)
 }
 }
 void logo(){
-	printf("      CCCCCCCCCCCCCPPPPPPPPPPPPPPPPP   UUUUUUUU     UUUUUUUU           /////// SSSSSSSSSSSSSSS    SSSSSSSSSSSSSSS     \n");sleep(1);
+printf("        CCCCCCCCCCCCCPPPPPPPPPPPPPPPPP   UUUUUUUU     UUUUUUUU           /////// SSSSSSSSSSSSSSS    SSSSSSSSSSSSSSS     \n");sleep(1);
 printf("     CCC::::::::::::CP::::::::::::::::P  U::::::U     U::::::U          /:::::/SS:::::::::::::::S SS:::::::::::::::S  \n");
 printf("   CC:::::::::::::::CP::::::PPPPPP:::::P U::::::U     U::::::U         /:::::/S:::::SSSSSS::::::SS:::::SSSSSS::::::S  \n");
 printf("  C:::::CCCCCCCC::::CPP:::::P     P:::::PUU:::::U     U:::::UU        /:::::/ S:::::S     SSSSSSSS:::::S     SSSSSSS  \n");sleep(1);
@@ -168,7 +179,7 @@ printf("        CCCCCCCCCCCCCPPPPPPPPPP                UUUUUUUUU  ///////       
 	
 }	
 void logo1(){
-	printf("      CCCCCCCCCCCCCPPPPPPPPPPPPPPPPP   UUUUUUUU     UUUUUUUU           /////// SSSSSSSSSSSSSSS    SSSSSSSSSSSSSSS     \n");
+printf("        CCCCCCCCCCCCCPPPPPPPPPPPPPPPPP   UUUUUUUU     UUUUUUUU           /////// SSSSSSSSSSSSSSS    SSSSSSSSSSSSSSS    \n");
 printf("     CCC::::::::::::CP::::::::::::::::P  U::::::U     U::::::U          /:::::/SS:::::::::::::::S SS:::::::::::::::S  \n");
 printf("   CC:::::::::::::::CP::::::PPPPPP:::::P U::::::U     U::::::U         /:::::/S:::::SSSSSS::::::SS:::::SSSSSS::::::S  \n");
 printf("  C:::::CCCCCCCC::::CPP:::::P     P:::::PUU:::::U     U:::::UU        /:::::/ S:::::S     SSSSSSSS:::::S     SSSSSSS  \n");
@@ -188,27 +199,41 @@ printf("        CCCCCCCCCCCCCPPPPPPPPPP                UUUUUUUUU  ///////       
 }
 	
 //read from the input file
-/*	f=fopen(inputFile,"r");
-				 
-				 if (f==NULL)
-				 {
-				 	printf("\ninput file not exits try agian @-@\n");//should use whole path
-				 	exit(1);
-				 	
-				 }
+
+void FCFS(FILE*f){
+		//f=fopen(inputFile,"r");
+	int BurstTime,ArrivalTime,Time=0,process=0,count=1,wait=0,TotalWait=0;//FCFS
+	char c;
+
 		while(!feof(f)){
-			if (columns==3)
-		{
-			printf("\n");
-			columns=0;
-		}
-		c=fgetc(f);
-		if (c==':')
-		{
-			printf("%c",c);
-			continue;
-		}
-		printf("%c",c);
-		columns++;
+							//int BurstTime,ArrivalTime,Time,process=1,count=1,wait;
+						c=fgetc(f);
+						
+						if (c==':') 
+								continue;
+						
+						 if (count==1) 
+						 		BurstTime=c-'0';
+
+						 if (count==2)
+								ArrivalTime=c-'0';
+					
+						 if (count==3)
+					{
+						wait=Time-ArrivalTime; 
+						Time +=BurstTime;
+						process++;
+						printf("\nprocess [%d]:%dms\n",process,wait);
+						TotalWait+=wait;
+						count=0;
+						continue;
+					}
+						count++;
 		
-			}*/
+		
+		
+			}
+			
+			printf("\nAverage Waiting Time:%dms\n",TotalWait/process);
+			
+		}
