@@ -4,6 +4,7 @@
 #include<unistd.h>
 #include <iostream>
 #include <string.h>
+#include <queue>
 
 using namespace std;
 struct processess{
@@ -32,26 +33,24 @@ void logo1();
 //
 //}
 void FCFS(FILE*f);
+void sjf(FILE*f)
+{
+	
+}
 int main(int argc ,char * argv[])
 {
 	
 	//
-	processessafter ppi[100];
+		 processessafter ppi[100];
 	int bburstTime[100];
-	//queue<int> arrivalTime;
-	//queue<int> shortJob;
-	processess p[4];												//sjf nonPreemptive variable
+	queue<int> arrivalTime;
+	queue<int> shortJob;
+	processess p[4];															//sjf varible
 	char c;int count=1,process=0;;
-	int arr[100];
-	int burst,arr0;
-	int i=1;
-	int maxBurst=p[i].B;
-	
+	char arr[100];
 	char bu[100];
-	int totalBurstTime=0;
-	int waitTime=0;
-	int time=0;
-	int v=1;
+	int totalBurstTime=0,k,v,j,minarr,maxarr,time=0,i=1,maxBurst,burst,arr0;
+	float timeT=0;
 	//
 	FILE *f;
 	int option=0;
@@ -169,44 +168,82 @@ switch (choise)
 	logo1();
 	break;
 	case 3:
+	
+	
+
 		//	FCFS(f);
 		
 //FILE *f;
 //f=fopen("input.txt","r");  
-		while(!feof(f)){
-				c=fgetc(f);						
-						if (c==':') 
-								continue;
-														//find no of process
-						 if (count==1) 
-						 		{
-						 			int j=0;
-						 			burst=0;
-									 p[i].p=i;
-									 p[i].B=c-'0';
-									 if(p[i].B>maxBurst)
-									 	maxBurst=p[i].B;
-								}
-								if (count==2) 
-						 		{
-						 			p[i].A=c-'0';
-								}
-						 				
+		while(!feof(f))
+		{
+			 j=0;
+			c=fgetc(f);
+			while(c!='\n'&&c!=EOF)
+			{
+				if (count==1)
+				{
+					j=0;
+					p[i].p=i;
+					while(c!=':')
+					{
+						bu[j]=c;
+						c=fgetc(f);	
+						j++;
+						//printf("%c",c);
+					}
+					sscanf(bu, "%d", &p[i].B);
+					c=fgetc(f);
+					//printf("\t");
+					count++;
+					//break;
+				}
+				for(int n = 0; n < sizeof bu; ++n)
+  							bu[n] = 0;
+				if (count==2)
+				{
+					 
+					  k=0;
+					while(c!=':'&&c!=EOF)
+					{
+						arr[k]=c;
+						c=fgetc(f);
+						k++;
+					}
+					sscanf(arr, "%d", &p[i].A);	
 					
-						 if (count==3)
-						 {
-						 	process++;
-						 	printf("process[%d]>The Burst Time :%d ArrivalTime :%d\n",p[i].p,p[i].B,p[i].A);
+					if(p[i].B>maxBurst)
+						maxBurst=p[i].B;
+					c=fgetc(f);
+					
+						
+					count++;
+				}
+				for(int n = 0; n < sizeof arr; ++n)
+  							arr[n] = 0;
+				if (count==3)
+				{
+					minarr=p[i].A;
+					//maxBurst=p[i].B;
+					if(minarr>p[i].A)
+					{
+						minarr=p[i].A;
+					}			 
+					while(  c!='\n'&&c!=EOF)
+					{
+						c=fgetc(f);
+					}	
+					printf("process[%d]>The Burst Time :%d ArrivalTime :%d\n",p[i].p,p[i].B,p[i].A);
 						 	i++;
-						 	count=0;
-						 	continue;
-						 }
-						 	count++;			 
+						 	 process++;
+					count=1;	
+				}
+
 			}
-			
-		
-			printf("\nwe have %d process\n",process);
-			
+	}
+	minarr=p[1].A;	
+				printf("\nwe have %d process\n",process);
+						v=1;
 			for (int d=0;d<=maxBurst;d++)
 			{
 			for (int u=1;u<=process;u++)
@@ -215,30 +252,51 @@ switch (choise)
 				{							
 							ppi[v].p=p[u].p;//1					//processess in order depending burst Time
 							ppi[v].A=p[u].A;//
+
+					if(minarr>ppi[v].A)
+					{
+						minarr=ppi[v].A;
+					}
+					if(maxarr<ppi[v].A)
+					{
+						maxarr=ppi[v].A;
+					}		
 							ppi[v].B=p[u].B;//
 							totalBurstTime+=p[u].B;
 							v++;
 					}			
 			}
 			
-			
 		}	
-
-			for (int d=1;d<=process;d++)
+					for (int d=1;d<=process;d++)
 			{
 				printf("\n\n<process[%d]",ppi[d].p);	
 				printf("\t<ArrivalTime:[%d]",ppi[d].A);	
 				printf("\t<BusrtTime:[%d]\n\n\n",ppi[d].B);	
 			}
+			
+			
+printf("min arrivalTime:%d\nmax arrivalTime:%d\n",minarr,maxarr);
+//int time=0;
+//int time0=time;
 
-
+//
+//	int time=0;
+//	float timeT=0;
 while(time!=totalBurstTime){
-
-	for(int i=1;i<=process;i++){
-										if (ppi[i].A<=time)
+							for(int j=0;j<maxarr;j++)
+							{
+								if (time!=0)
+									j=time;
+							
+					for(int i=1;i<=process;i++){
+		
+										if (ppi[i].A<=j)
 									{
-										printf("process[%d]waitTime[%d]\n",ppi[i].p,time);
+										timeT+=time-ppi[i].A;
+										printf("process[%d]waitTime[%d]\n",ppi[i].p,time-ppi[i].A);
 										time+=ppi[i].B;
+										
 										for(int y=i;y<sizeof(ppi) / sizeof(ppi[0]);y++)
 										{
 											ppi[y].A=ppi[y+1].A;
@@ -248,19 +306,20 @@ while(time!=totalBurstTime){
 										break;			
 										
 									}
+									
 							}
-						
-}
-			
-			
-			
+							}
+							}
+							printf("\nAverage Waiting Time:%fms\n",timeT/process);
+							timeT=0;
+							time=0;
 		////
 			
 				
-			
+
 
 	break;
-	
+
 	case 4:
 		printf("\nGood bye ^-^\n");
 		return 0;
@@ -348,6 +407,7 @@ void FCFS(FILE*f){
 			}
 			
 			printf("\nAverage Waiting Time:%dms\n",TotalWait/process);
+							
 			
 		}
 //void SJF_nonPreemptivev()
