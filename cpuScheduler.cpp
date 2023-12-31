@@ -45,7 +45,7 @@ void logo1();
 //					}	
 //
 //}
-void FCFS(FILE*f);
+void FCFS();
 void sjf(char*inputFile);
 
 int main(int argc ,char * argv[])
@@ -63,7 +63,7 @@ int main(int argc ,char * argv[])
 //	int totalBurstTime=0,k,v,j,minarr,maxarr,time=0,i=1,maxBurst,burst,arr0;
 //	float timeT=0;
 	//
-	FILE *f;
+	//FILE *f;
 	int option=0;
 	char*inputFile=NULL,*outputFile=NULL;
 	while((option=getopt(argc,argv,"f:o:"))!=-1){
@@ -109,7 +109,7 @@ printf("\n\n\n");
 logo1();
 bool end =false;
 char schedulingMethod [100]="none",Preemptivemethod [100]="Preemptive";
-             f=fopen(inputFile,"r");                  
+             //f=fopen(inputFile,"r");                  
 while (end==false){
                                                                                                                                                                                                                                                                         
 printf("\n1)Scheduling Method(%s)\n2)Preemptive Mode(%s)\n3)Show Result\n4)End Program\nOption>",schedulingMethod,Preemptivemethod);
@@ -180,14 +180,14 @@ switch (choise)
 	break;
 	case 3:
 	
-	
-
-		//	FCFS(f);
-		
-//FILE *f;
+//	FILE *f;
 //f=fopen("input.txt","r");  
+			FCFS();
+		
+
+
 	
-	 sjf(inputFile);
+	 //sjf(inputFile);
 	break;
 
 	case 4:
@@ -242,11 +242,23 @@ printf("        CCCCCCCCCCCCCPPPPPPPPPP                UUUUUUUUU  ///////       
 	
 //read from the input file
 
-void FCFS(FILE*f){
-		//f=fopen(inputFile,"r");
+void FCFS()
+{
+	FILE*f;
+		f=fopen("input.txt","r");
+		if (f==NULL)
+				{
+					printf("File not exit");
+					
+				}
+	struct processessafter p[100];
+	char arr[100];
+	char bu[100];
 	int BurstTime,ArrivalTime,Time=0,process=0,count=1,wait=0,TotalWait=0;//FCFS
 	char c;
-
+	int totalBurstTime=0,k,v,j,minarr,maxarr,time=0,i=1,maxBurst,burst,arr0;
+	
+		
 		while(!feof(f)){
 							//int BurstTime,ArrivalTime,Time,process=1,count=1,wait;
 						c=fgetc(f);
@@ -254,32 +266,65 @@ void FCFS(FILE*f){
 						if (c==':') 
 								continue;
 						
-						 if (count==1) 
-						 		BurstTime=c-'0';
-
-						 if (count==2)
-								ArrivalTime=c-'0';
+												 if (count==1) 
+												 {
+												 	j=0;
+												 	while(c!=':')
+												 	{
+												 		bu[j]=c;
+												 		c=fgetc(f);	
+															j++;
+													 }
+													 sscanf(bu, "%d", &p[i].B);
+													c=fgetc(f);
+													count++;
+											
+												 }
+//						 		BurstTime=c-'0';
+for(int n = 0; n < sizeof bu; ++n)
+  							bu[n] = 0;
+						 		
+						 			if (count==2)
+											{
+												 
+												  k=0;
+												while(c!=':'&&c!=EOF)
+												{
+													arr[k]=c;
+													c=fgetc(f);
+													k++;
+												}
+												sscanf(arr, "%d", &p[i].A);	
+												p[i].p=i;
+							
+													
+												count++;
+											}
+								 
+//								ArrivalTime=c-'0';
 					
-						 if (count==3)
-					{
-						wait=Time-ArrivalTime; 
-						Time +=BurstTime;
-						process++;
-						printf("\nprocess [%d]:%dms\n",process,wait);
-						TotalWait+=wait;
-						count=0;
-						continue;
-					}
-						count++;
-		
-		
+					for(int n = 0; n < sizeof arr; ++n)
+  							arr[n] = 0;
+						if (count==3)
+						{
+							
+							while(  c!='\n'&&c!=EOF)
+							{
+								c=fgetc(f);
+							}	
+							wait=Time-p[i].A; 
+							Time +=p[i].B;
+							printf("process[%d]>The Burst Time :%d ArrivalTime :%d\t waitTime:%d\n",p[i].p,p[i].B,p[i].A,wait);
+								TotalWait+=wait;
+							//wait += p[i].B;
+								 	i++;
+								 	 process++;
+							count=1;	
+						}
 		
 			}
-			
-			printf("\nAverage Waiting Time:%dms\n",TotalWait/process);
-							
-			
-		}
+			fclose(f);
+}
 void sjf(char*inputFile)
 {
 			
@@ -395,16 +440,6 @@ f=fopen(inputFile,"r");
    	printf("\naverage waiting time is :%f",totalWaitTimes/final);
    	totalWaitTimes=0;
    	final=0;
-   	//delete all structs
-//   	for (int i = 0; i < final; i++) {
-//        ppi[i].A=0;  
-//        ppi[i].B=0;
-//        ppi[i].p=0;
-//        ////
-//        p[i].A=0;
-//        p[i].B=0;
-//        p[i].p=0;
-//    }
 
    	
 }
