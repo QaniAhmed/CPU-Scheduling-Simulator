@@ -10,11 +10,14 @@ struct processess{
 	int p=0;
 	int B;
 	int A;
+	int pr;
+	int wait;
 };
 struct processessafter{
 	int p=0;
 	int B;
 	int A;
+	int pr;
 	int wait;
 };
 void elementDeleteafterprint(struct processessafter ppi[], int *process, int index) {
@@ -48,7 +51,7 @@ void logo1();
 //}
 void FCFS(char*inputFile);
 void sjf(char*inputFile);
-
+void Priority();
 int main(int argc ,char * argv[])
 {
 	
@@ -84,23 +87,23 @@ int main(int argc ,char * argv[])
 		}
 		
 		}
-				if (inputFile==NULL &&outputFile==NULL)
-				{
-						printf("try agian use -f[input file] and -o[output file]");
-						exit(1);
-				}
-				
-				else if (inputFile==NULL)
-				{
-					printf("try agian use -f[input file]");
-					exit(1);
-				}
-						
-				 else if (outputFile==NULL)
-				 {
-				 	printf("try agian use -o[output file]");
-				 	exit(1);
-				 }
+//				if (inputFile==NULL &&outputFile==NULL)
+//				{
+//						printf("try agian use -f[input file] and -o[output file]");
+//						exit(1);
+//				}
+//				
+//				else if (inputFile==NULL)
+//				{
+//					printf("try agian use -f[input file]");
+//					exit(1);
+//				}
+//						
+//				 else if (outputFile==NULL)
+//				 {
+//				 	printf("try agian use -o[output file]");
+//				 	exit(1);
+//				 }
 //				 		check if the input file is empty
 //				 		CheckInputFile(f);
 				
@@ -180,15 +183,13 @@ switch (choise)
 	logo1();
 	break;
 	case 3:
-	
-//	FILE *f;
-//f=fopen("input.txt","r");  
-			FCFS(inputFile);
-		
-
-
-	
-	 //sjf(inputFile);
+//		if (schedulingMethod=="none")
+//			printf("select method before");
+// else if (method ==1)
+//			FCFS(inputFile);
+//else if (method==2)
+//			sjf(inputFile);
+ Priority();
 	break;
 
 	case 4:
@@ -340,18 +341,23 @@ f=fopen(inputFile,"r");
         int count = 0;
 
         while (token != NULL) {
-            if (count == 0) {
+            if (count == 0) {											//count =0 burst time 
                 p[process].p = process + 1;
                 p[process].B = atoi(token);
                 if (p[process].B>maxBurst)
-                		maxBurst=p[process].B;
-            } else if (count == 1) {
+                		maxBurst=p[process].B;	
+            } else if (count == 1) {										//count =1 arrival time
                 p[process].A = atoi(token);
                 if (p[process].A<minarr)
                 		minarr=p[process].A;
                 if (p[process].A>minarr)
                 		maxarr=p[process].A;
             }
+            else if (count == 3)
+            {
+            	
+			}
+            
 
             token = strtok(NULL, ":");
             count++;
@@ -435,4 +441,141 @@ f=fopen(inputFile,"r");
    	final=0;
 
    	
+}
+void Priority()
+{
+		FILE *f;
+f=fopen("input.txt","r"); 
+	 	struct processess p[10000];
+    struct processessafter ppi[10000];
+    char line[100*1000];  // Assuming a maximum line length of 100 characters
+    int process = 0;
+    int totalBurstTime = 0;
+    float timeT = 0;
+    int maxBurst=p[0].B,minarr=p[0].A,maxarr=p[0].A,lowstpr=p[0].pr,maxpr=p[0].pr;
+ 
+    while (fgets(line, sizeof(line), f) != NULL) {
+        char *token = strtok(line, ":");
+        int count = 0;
+
+        while (token != NULL) {
+            if (count == 0) {											//count =0 burst time 
+                p[process].p = process + 1;
+                p[process].B = atoi(token);
+                if (p[process].B>maxBurst)
+                		maxBurst=p[process].B;	
+            } else if (count == 1) {										//count =1 arrival time
+                p[process].A = atoi(token);
+                if (p[process].A<minarr)
+                		minarr=p[process].A;
+                if (p[process].A>minarr)
+                		maxarr=p[process].A;
+            }
+            else if (count == 2)
+            {
+            		p[process].pr= atoi(token);								//count =2 Priority time
+			}
+            
+
+            token = strtok(NULL, ":");
+            count++;
+        }
+			printf("process[%d]>>BurstTime[%d]>>arrivalTime[%d]>>priority[%d] \n\n",p[process].p,p[process].B,p[process].A,p[process].pr);
+        process++;
+    }
+    fclose(f);//close the file after reading
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    int u ;
+    int v=0;
+    for (int d=0;d<=maxBurst;d++)
+			{
+			for (u=0;u<=process;u++)
+			{ 
+				if (p[u].pr==d)
+				{							
+							ppi[v].p=p[u].p;//1									//processess in order depending priority Time
+							ppi[v].A=p[u].A;//
+							ppi[v].B=p[u].B;//
+							ppi[v].pr=p[u].pr;
+							totalBurstTime+=p[u].B;
+							
+
+					if(minarr>ppi[v].A)
+					{
+						minarr=ppi[v].A;
+					}
+					if(maxarr<ppi[v].A)
+					{
+						maxarr=ppi[v].A;
+					}		
+						v++;	
+					}			
+					
+			}
+			//u=0;
+			
+		}
+		 for (int b = 0; b < process; b++) {
+        p[b].A = 0;
+        p[b].B = 0;
+        p[b].pr = 0;
+       
+    }
+		// elementDeleteafterprint(p, &process, );
+		 for (int d = 1; d <= process; d++) {
+			printf("process[%d]>>BurstTime[%d]>>arrivalTime[%d]>>priority[%d] \n\n",ppi[d].p,ppi[d].B,ppi[d].A,ppi[d].pr);
+    				}
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////		
+				
+int time=0;
+
+        int checker=0,waitTime=0,i,final=process;
+        float totalWaitTimes;
+        if(time<minarr)
+        			time=minarr;
+        //int count=1;
+        for(int timer=0;time<totalBurstTime;timer++)
+        {
+
+	for( i=1;i<=process;i++)
+        	{
+        		checker=time;
+        		if(ppi[i].A<=time)
+        		{
+        			
+        			waitTime = time-ppi[i].A;
+        				totalWaitTimes+=waitTime;
+        				p[i].wait=waitTime;
+        				
+        		
+				printf("\n\n\n\n\n\n<process[%d]\t<ArrivalTime:[%d]\t<BusrtTime:[%d]\t Time%d", ppi[i].p, ppi[i].A, ppi[i].B,waitTime);
+				p[i].A=ppi[i].A;
+				p[i].B=ppi[i].B;
+				p[i].p=ppi[i].p;
+				p[i].wait=ppi[i].wait;
+				
+        			time+=ppi[i].B;	
+        		
+        			// Delete the element after printing
+                elementDeleteafterprint(ppi, &process, i);
+                break;
+				}
+				
+				else if (checker==time  && i==process) // final or process?
+						time++;	
+			}
+								
+}
+//find the average time 
+   	printf("\nAverage Waiting Time: 6.4 ms :%f\n\n",totalWaitTimes/final);
+   	totalWaitTimes=0;
+   	printf("the result is :\n");
+   	for(int a=0;a<final;a++)
+   	{
+   		
+   		   	printf("\n\t<p[%d]\twaitTime%d ms \tburst %d\t arrival %d", p[a].p,p[a].wait,p[a].B,p[a].A);
+   		
+	   }
+final=0;
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 }
