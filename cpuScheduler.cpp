@@ -15,6 +15,7 @@ struct processessafter{
 	int p=0;
 	int B;
 	int A;
+	int wait;
 };
 void elementDeleteafterprint(struct processessafter ppi[], int *process, int index) {
     if (index < 1 || index > *process) {
@@ -45,7 +46,7 @@ void logo1();
 //					}	
 //
 //}
-void FCFS();
+void FCFS(char*inputFile);
 void sjf(char*inputFile);
 
 int main(int argc ,char * argv[])
@@ -100,8 +101,8 @@ int main(int argc ,char * argv[])
 				 	printf("try agian use -o[output file]");
 				 	exit(1);
 				 }
-				 		//check if the input file is empty
-				 		//CheckInputFile(f);
+//				 		check if the input file is empty
+//				 		CheckInputFile(f);
 				
 				
 int choise;
@@ -182,7 +183,7 @@ switch (choise)
 	
 //	FILE *f;
 //f=fopen("input.txt","r");  
-			FCFS();
+			FCFS(inputFile);
 		
 
 
@@ -242,88 +243,84 @@ printf("        CCCCCCCCCCCCCPPPPPPPPPP                UUUUUUUUU  ///////       
 	
 //read from the input file
 
-void FCFS()
+void FCFS(char*inputFile)
 {
-	FILE*f;
-		f=fopen("input.txt","r");
-		if (f==NULL)
-				{
-					printf("File not exit");
-					
-				}
-	struct processessafter p[100];
-	char arr[100];
-	char bu[100];
-	int BurstTime,ArrivalTime,Time=0,process=0,count=1,wait=0,TotalWait=0;//FCFS
-	char c;
-	int totalBurstTime=0,k,v,j,minarr,maxarr,time=0,i=1,maxBurst,burst,arr0;
-	
-		
-		while(!feof(f)){
-							//int BurstTime,ArrivalTime,Time,process=1,count=1,wait;
-						c=fgetc(f);
-						
-						if (c==':') 
-								continue;
-						
-												 if (count==1) 
-												 {
-												 	j=0;
-												 	while(c!=':')
-												 	{
-												 		bu[j]=c;
-												 		c=fgetc(f);	
-															j++;
-													 }
-													 sscanf(bu, "%d", &p[i].B);
-													c=fgetc(f);
-													count++;
-											
-												 }
-//						 		BurstTime=c-'0';
-for(int n = 0; n < sizeof bu; ++n)
-  							bu[n] = 0;
-						 		
-						 			if (count==2)
-											{
-												 
-												  k=0;
-												while(c!=':'&&c!=EOF)
-												{
-													arr[k]=c;
-													c=fgetc(f);
-													k++;
-												}
-												sscanf(arr, "%d", &p[i].A);	
-												p[i].p=i;
-							
-													
-												count++;
-											}
-								 
-//								ArrivalTime=c-'0';
-					
-					for(int n = 0; n < sizeof arr; ++n)
-  							arr[n] = 0;
-						if (count==3)
-						{
-							
-							while(  c!='\n'&&c!=EOF)
-							{
-								c=fgetc(f);
-							}	
-							wait=Time-p[i].A; 
-							Time +=p[i].B;
-							printf("process[%d]>The Burst Time :%d ArrivalTime :%d\t waitTime:%d\n",p[i].p,p[i].B,p[i].A,wait);
-								TotalWait+=wait;
-							//wait += p[i].B;
-								 	i++;
-								 	 process++;
-							count=1;	
+//	FILE *f;
+//f=fopen("input.txt","r"); 
+			
+FILE *f;
+f=fopen(inputFile,"r"); 
+	 	struct processess p[10000];
+    struct processessafter ppi[10000];
+    char line[1000*1000];  // 
+    int process = 0;
+    int totalBurstTime = 0;
+    float timeT = 0;
+    int maxBurst=p[0].B,minarr=p[0].A,maxarr=p[0].A;
+ 
+    while (fgets(line, sizeof(line), f) != NULL) {
+        char *token = strtok(line, ":");
+        int count = 0;
+
+        while (token != NULL) {
+            if (count == 0) {
+                p[process].p = process + 1;
+                p[process].B = atoi(token);
+                if (p[process].B>maxBurst)
+                		maxBurst=p[process].B;
+            } else if (count == 1) {
+                p[process].A = atoi(token);
+                if (p[process].A<minarr)
+                		minarr=p[process].A;
+                if (p[process].A>maxarr)
+                		maxBurst=p[process].A;
+            }
+
+            token = strtok(NULL, ":");
+            count++;
+        }
+			printf("process[%d]>>BurstTime[%d]>>arrivalTime[%d]\n\n",p[process].p,p[process].B,p[process].A);
+        process++;
+    }
+    fclose(f);//close the file after reading
+    printf("\n\n we hava : %d process\n\n",process);
+  
+///////////////////////////////////////////////////////////////////////
+    int u ;
+    int v=0;
+    for (int d=0;d<=maxBurst;d++)
+			{
+				for (u=0;u<process;u++)
+				{ 
+						if (p[u].A==d)
+						{							
+									ppi[v].p=p[u].p;						//processess in order depending Arrival time
+									ppi[v].A=p[u].A;
+									ppi[v].B=p[u].B;
+									totalBurstTime+=p[u].B;
+									v++;
 						}
-		
+				}
 			}
-			fclose(f);
+				 for (int d = 0; d < process; d++) {
+        printf("\n<process[%d]\t<ArrivalTime:[%d]\t<BusrtTime:[%d]\n\n", ppi[d].p, ppi[d].A, ppi[d].B);
+    				}
+/////////////////////////////////////////////////////////////////////    
+int waitTime=0;
+float averageWaitTime;
+for(int j=0;j<process;j++)
+		{
+			ppi[j].wait=waitTime-ppi[j].A;
+			averageWaitTime+=ppi[j].wait;
+			 printf("\n>>>>>process[%d]\t<ArrivalTime:[%d]\t<BusrtTime:[%d] \t waitTime %d ms\n\n", ppi[j].p, ppi[j].A, ppi[j].B,ppi[j].wait);
+			 waitTime+=ppi[j].B;
+		}
+		//printf("time %d process %d",waitTime,process);
+		//averageWaitTime=waitTime/process;
+		printf("Average Waiting Time: %f ms",averageWaitTime/process);
+		averageWaitTime=0;
+
+
 }
 void sjf(char*inputFile)
 {
@@ -337,11 +334,7 @@ f=fopen(inputFile,"r");
     int totalBurstTime = 0;
     float timeT = 0;
     int maxBurst=p[0].B,minarr=p[0].A,maxarr=p[0].A;
-    	
-	//FILE *f; 
-	//f=fopen("input.txt","r");  
-    
-//read from the file 
+ 
     while (fgets(line, sizeof(line), f) != NULL) {
         char *token = strtok(line, ":");
         int count = 0;
