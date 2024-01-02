@@ -20,6 +20,8 @@ struct processessafter{
 	int pr;
 	int wait;
 };
+
+
 void elementDeleteafterprint(struct processessafter ppi[], int *process, int index) {
     if (index < 1 || index > *process) {
         printf("Invalid index\n");
@@ -29,6 +31,20 @@ void elementDeleteafterprint(struct processessafter ppi[], int *process, int ind
     // Shift elements to the left from the index to the end
     for (int i = index; i < *process; i++) {
         ppi[i] = ppi[i + 1];
+    }
+
+    // Decrease the size of the array
+    (*process)--;
+}
+void elementDeleteafterprint2(struct processess p[], int *process, int index) {
+    if (index < 1 || index > *process) {
+        printf("Invalid index\n");
+        return;
+    }
+
+    // Shift elements to the left from the index to the end
+    for (int i = index; i < *process; i++) {
+        p[i] = p[i + 1];
     }
 
     // Decrease the size of the array
@@ -448,6 +464,8 @@ void Priority()
 f=fopen("input.txt","r"); 
 	 	struct processess p[10000];
     struct processessafter ppi[10000];
+    struct processess result[10000];
+    
     char line[100*1000];  // Assuming a maximum line length of 100 characters
     int process = 0;
     int totalBurstTime = 0;
@@ -487,6 +505,7 @@ f=fopen("input.txt","r");
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     int u ;
     int v=0;
+    int jjj=process;
     for (int d=0;d<=maxBurst;d++)
 			{
 			for (u=0;u<=process;u++)
@@ -499,7 +518,7 @@ f=fopen("input.txt","r");
 							ppi[v].pr=p[u].pr;
 							totalBurstTime+=p[u].B;
 							
-
+	
 					if(minarr>ppi[v].A)
 					{
 						minarr=ppi[v].A;
@@ -510,7 +529,7 @@ f=fopen("input.txt","r");
 					}		
 						v++;	
 					}			
-					
+					//	elementDeleteafterprint2(p, &process,u );
 			}
 			//u=0;
 			
@@ -521,7 +540,7 @@ f=fopen("input.txt","r");
         p[b].pr = 0;
        
     }
-		// elementDeleteafterprint(p, &process, );
+	process=jjj;
 		 for (int d = 1; d <= process; d++) {
 			printf("process[%d]>>BurstTime[%d]>>arrivalTime[%d]>>priority[%d] \n\n",ppi[d].p,ppi[d].B,ppi[d].A,ppi[d].pr);
     				}
@@ -530,7 +549,7 @@ f=fopen("input.txt","r");
 int time=0;
 
         int checker=0,waitTime=0,i,final=process;
-        float totalWaitTimes;
+        float totalWaitTimes;int itreation=1;
         if(time<minarr)
         			time=minarr;
         //int count=1;
@@ -545,14 +564,13 @@ int time=0;
         			
         			waitTime = time-ppi[i].A;
         				totalWaitTimes+=waitTime;
-        				p[i].wait=waitTime;
+        			//	p[i].wait=waitTime;
+        		result[itreation].p=ppi[i].p;
+				result[itreation].wait=waitTime;
+				itreation++;
         				
-        		
 				printf("\n\n\n\n\n\n<process[%d]\t<ArrivalTime:[%d]\t<BusrtTime:[%d]\t Time%d", ppi[i].p, ppi[i].A, ppi[i].B,waitTime);
-				p[i].A=ppi[i].A;
-				p[i].B=ppi[i].B;
-				p[i].p=ppi[i].p;
-				p[i].wait=ppi[i].wait;
+				printf("\n<<<<<the result array > process: %d waitTime: %d >>>>>>\n",result[i].p,result[i].wait);
 				
         			time+=ppi[i].B;	
         		
@@ -564,18 +582,34 @@ int time=0;
 				else if (checker==time  && i==process) // final or process?
 						time++;	
 			}
-								
+							
 }
-//find the average time 
-   	printf("\nAverage Waiting Time: 6.4 ms :%f\n\n",totalWaitTimes/final);
-   	totalWaitTimes=0;
-   	printf("the result is :\n");
-   	for(int a=0;a<final;a++)
-   	{
-   		
-   		   	printf("\n\t<p[%d]\twaitTime%d ms \tburst %d\t arrival %d", p[a].p,p[a].wait,p[a].B,p[a].A);
-   		
-	   }
-final=0;
+
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+ u=1 ;
+v=0;
+system("@cls||clear");
+printf("\t+-----------------------------------+\n");
+printf("\t¦Priority Scheduling  Non-Preemptive¦\n");
+printf("\t+-----------------------------------+");
+printf("\n\nScheduling Method: Priority Scheduling – Non-Preemptive\nProcess Waiting Times:\n");
+    for (int d=1;d<=final;d++)
+			{
+			for (u=1;u<=final;u++)	                 //sorting and show the result 
+			{ 
+				if (result[u].p==d)
+				{							
+	 	printf("P%d : %dms\n",result[u].p,result[u].wait);
+	 	
+	 	break;
+					}	
+							
+			}		
+		}
+					//find the average time 
+   	printf("\nAverage Waiting Time:  :%f ms\n\n",totalWaitTimes/final);
+   	totalWaitTimes=0;
+
+final=0;
 }
