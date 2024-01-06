@@ -204,8 +204,9 @@ switch (choise)
 // else if (method ==1)
 //			FCFS(inputFile);
 //else if (method==2)
-//			sjf(inputFile);
- Priority();
+		//sjf(inputFile);
+ //Priority();
+ FCFS(inputFile);
 	break;
 
 	case 4:
@@ -266,9 +267,10 @@ void FCFS(char*inputFile)
 //f=fopen("input.txt","r"); 
 			
 FILE *f;
-f=fopen(inputFile,"r"); 
+f=fopen("input.txt","r"); 
 	 	struct processess p[10000];
     struct processessafter ppi[10000];
+    struct processess result[10000];
     char line[1000*1000];  // 
     int process = 0;
     int totalBurstTime = 0;
@@ -325,27 +327,46 @@ f=fopen(inputFile,"r");
 /////////////////////////////////////////////////////////////////////    
 int waitTime=0;
 float averageWaitTime;
-for(int j=0;j<process;j++)
+for(int j=0;j<process;j++){
+
 		{
+			
 			ppi[j].wait=waitTime-ppi[j].A;
 			averageWaitTime+=ppi[j].wait;
+			result[j].p=ppi[j].p;
+			result[j].wait=ppi[j].wait;
 			 printf("\n>>>>>process[%d]\t<ArrivalTime:[%d]\t<BusrtTime:[%d] \t waitTime %d ms\n\n", ppi[j].p, ppi[j].A, ppi[j].B,ppi[j].wait);
 			 waitTime+=ppi[j].B;
+		}
+
+}
+		for (int d=1;d<=process;d++)
+			{
+			for (u=1;u<=process;u++)	                 //sorting and show the result 
+			{ 
+				if (result[u].p==d)
+				{		
+		printf("-------------------\n");					
+	 	printf("  P%d : \t %dms\n",result[u].p,result[u].wait);
+	 	
+	 	break;
+					}	
+							
+			}		
 		}
 		//printf("time %d process %d",waitTime,process);
 		//averageWaitTime=waitTime/process;
 		printf("Average Waiting Time: %f ms",averageWaitTime/process);
 		averageWaitTime=0;
-
-
 }
 void sjf(char*inputFile)
 {
 			
 FILE *f;
-f=fopen(inputFile,"r"); 
+f=fopen("input.txt","r"); 
 	 	struct processess p[10000];
     struct processessafter ppi[10000];
+     struct processess result[10000];
     char line[100*1000];  // Assuming a maximum line length of 100 characters
     int process = 0;
     int totalBurstTime = 0;
@@ -423,38 +444,62 @@ f=fopen(inputFile,"r");
         int waitTime=0;
         int i;
         int final=process;
-        float totalWaitTimes;
+        float totalWaitTimes; 
+		int itreation=1;
         if(time<minarr)
         			time=minarr;
         //int count=1;
         for(int timer=0;time<totalBurstTime;timer++)
         {
-
 	for( i=1;i<=process;i++)
         	{
         		checker=time;
         		if(ppi[i].A<=time)
         		{
-        			
         			waitTime = time-ppi[i].A;
         				totalWaitTimes+=waitTime;
+        				result[itreation].p=ppi[i].p;
+						result[itreation].wait=waitTime;
+				itreation++;
 				printf("\n<process[%d]\t<ArrivalTime:[%d]\t<BusrtTime:[%d]\t Time%d", ppi[i].p, ppi[i].A, ppi[i].B,waitTime);
         			time+=ppi[i].B;	
-        		
         			// Delete the element after printing
                 elementDeleteafterprint(ppi, &process, i);
                 break;
 				}
-				
 				else if (checker==time  && i==process)
 						time++;	
-			}
-								
+			}						
 }
-//find the average time 
-   	printf("\naverage waiting time is :%f",totalWaitTimes/final);
+////find the average time 
+//   	printf("\naverage waiting time is :%f",totalWaitTimes/final);
+//   	totalWaitTimes=0;
+//   	final=0;
+system("@cls||clear");
+printf("\t+------------------------------------------------------+\n");
+printf("\t¦Scheduling Method: Shortest Job First – Non-Preemptive¦\n");
+printf("\t+--------------------------------------------------------+");
+printf("\nprocess\twatitngTime\n");
+    for (int d=1;d<=final;d++)
+			{
+			for (u=1;u<=final;u++)	                 //sorting and show the result 
+			{ 
+				if (result[u].p==d)
+				{		
+		printf("-------------------\n");					
+	 	printf("  P%d : \t %dms\n",result[u].p,result[u].wait);
+	 	
+	 	break;
+					}	
+							
+			}		
+		}
+					//find the average time 
+	printf("-------------------\n");
+   	printf("Average Waiting Time:  :%f ms\n",totalWaitTimes/final);
    	totalWaitTimes=0;
-   	final=0;
+
+final=0;
 
    	
 }
@@ -593,14 +638,16 @@ system("@cls||clear");
 printf("\t+-----------------------------------+\n");
 printf("\t¦Priority Scheduling  Non-Preemptive¦\n");
 printf("\t+-----------------------------------+");
-printf("\n\nScheduling Method: Priority Scheduling – Non-Preemptive\nProcess Waiting Times:\n");
+printf("\n\nScheduling Method: Priority Scheduling[Non-Preemptive]\n");
+printf("\nprocess\twatitngTime\n");
     for (int d=1;d<=final;d++)
 			{
 			for (u=1;u<=final;u++)	                 //sorting and show the result 
 			{ 
 				if (result[u].p==d)
-				{							
-	 	printf("P%d : %dms\n",result[u].p,result[u].wait);
+				{		
+		printf("-------------------\n");					
+	 	printf("  P%d : \t %dms\n",result[u].p,result[u].wait);
 	 	
 	 	break;
 					}	
@@ -608,8 +655,131 @@ printf("\n\nScheduling Method: Priority Scheduling – Non-Preemptive\nProcess W
 			}		
 		}
 					//find the average time 
-   	printf("\nAverage Waiting Time:  :%f ms\n\n",totalWaitTimes/final);
+	printf("-------------------\n");
+   	printf("Average Waiting Time:  :%f ms\n",totalWaitTimes/final);
    	totalWaitTimes=0;
 
 final=0;
 }
+///////////////////////sjf preemptive////////////////////////
+{
+		 	struct processess p[10000];
+    struct processessafter ppi[10000];
+     struct processess result[10000];
+    char line[100*1000];  // Assuming a maximum line length of 100 characters
+    int process = 0;
+    int totalBurstTime = 0;
+    float timeT = 0;
+    int maxBurst=p[0].B,minarr=p[0].A,maxarr=p[0].A;
+ ////////////////////////////////////////////////////////////////////////////
+    while (fgets(line, sizeof(line), f) != NULL) {
+        char *token = strtok(line, ":");
+        int count = 0;
+
+        while (token != NULL) {
+            if (count == 0) {	
+									process++;				//count =0 burst time 
+                p[process].p = process;
+                p[process].B = atoi(token);
+                if (p[process].B>maxBurst)
+                		maxBurst=p[process].B;	
+            } else if (count == 1) {										//count =1 arrival time
+                p[process].A = atoi(token);
+                if (p[process].A<minarr)
+                		minarr=p[process].A;
+                if (p[process].A>minarr)
+                		maxarr=p[process].A;
+            }
+            else if (count == 3)
+            {
+            	
+			}
+            
+
+            token = strtok(NULL, ":");
+            count++;
+            
+        }
+			printf("process[%d]>>BurstTime[%d]>>arrivalTime[%d]\n\n",p[process].p,p[process].B,p[process].A);
+    }
+    fclose(f);//close the file after reading
+    printf("number of process if %d",process);
+ ////////////////////////////////////////////////////////////////////////////////////////////////////
+// int u,v=1;
+//    for (int d=0;d<=maxBurst;d++)
+//			{
+//			for (u=1;u<=process;u++)
+//			{ 
+//				if (p[u].A==d)
+//				{							
+//							ppi[v].p=p[u].p;//1					//processess in order depending Arrival Time
+//							ppi[v].A=p[u].A;//
+//							ppi[v].B=p[u].B;//
+//							totalBurstTime+=p[u].B;
+//					if(minarr>ppi[v].A)
+//					{
+//						minarr=ppi[v].A;
+//					}
+//					if(maxarr<ppi[v].A)
+//					{
+//						maxarr=ppi[v].A;
+//					}		
+//						v++;	
+//					}				
+//			}	
+//		}
+//		 for (int d = 1; d <= process; d++) {
+//        printf("\n<process[%d]\t<ArrivalTime:[%d]\t<BusrtTime:[%d]\n\n", ppi[d].p, ppi[d].A, ppi[d].B);
+//    				}	
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+int i,l=0,timer=0;
+printf("%d>>\n",p[1].B);
+int j=1;
+int minBurs=p[1].B;
+while(timer<=1)
+{
+			for (i=1;i<=process;i++)
+		{
+			//put the process has the time x in the struct 
+						if (p[i].A==timer )
+							{
+						ppi[j].A=p[i].A;
+						ppi[j].B=p[i].B;
+						ppi[j].p=p[i].p;
+						l++;
+						j++;
+							}
+		}
+		for(int i=1;i<=l;i++)
+	{
+		printf("<process[%d]\t<ArrivalTime:[%d]\t<BusrtTime:[%d]\n", ppi[i].p, ppi[i].A, ppi[i].B);	
+	}
+
+
+		//put process with same time in order depending on burst time
+		int v=0,u ,n=0;
+		    for (int d=0;d<=maxarr;d++)
+				{
+					  for (u=1;u<=l;u++)
+					{ 
+							if (ppi[u].B==d )
+							{	
+										v++;				
+										result[v].p=ppi[u].p;	
+										result[v].A=ppi[u].A;
+										result[v].B=ppi[u].B;	
+										printf("<process[%d]\t<ArrivalTime:[%d]\t<BusrtTime:[%d]\n", result[v].p, result[v].A, result[v].B);
+										n++;	
+						   }			
+					}	
+				}
+				printf("process with Time{%d}\n",timer);
+		for (int i=1;i<=process&&result[i].p!=NULL;i++)
+		{
+		        printf("<process[%d]\t<ArrivalTime:[%d]\t<BusrtTime:[%d]\n", result[i].p, result[i].A, result[i].B);	
+		}
+		timer++;
+}
+}
+
+///////////////////////////////////////////////////////////////////////////////////////
