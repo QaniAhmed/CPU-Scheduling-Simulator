@@ -661,125 +661,61 @@ printf("\nprocess\twatitngTime\n");
 
 final=0;
 }
-///////////////////////sjf preemptive////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+int burstTime2=0;
+int *pp;
+int timer=0;
+int counterwait=0;
+bool start=false;
+while(timer<=maxarr)
 {
-		 	struct processess p[10000];
-    struct processessafter ppi[10000];
-     struct processess result[10000];
-    char line[100*1000];  // Assuming a maximum line length of 100 characters
-    int process = 0;
-    int totalBurstTime = 0;
-    float timeT = 0;
-    int maxBurst=p[0].B,minarr=p[0].A,maxarr=p[0].A;
- ////////////////////////////////////////////////////////////////////////////
-    while (fgets(line, sizeof(line), f) != NULL) {
-        char *token = strtok(line, ":");
-        int count = 0;
-
-        while (token != NULL) {
-            if (count == 0) {	
-									process++;				//count =0 burst time 
-                p[process].p = process;
-                p[process].B = atoi(token);
-                if (p[process].B>maxBurst)
-                		maxBurst=p[process].B;	
-            } else if (count == 1) {										//count =1 arrival time
-                p[process].A = atoi(token);
-                if (p[process].A<minarr)
-                		minarr=p[process].A;
-                if (p[process].A>minarr)
-                		maxarr=p[process].A;
-            }
-            else if (count == 3)
-            {
-            	
-			}
-            
-
-            token = strtok(NULL, ":");
-            count++;
-            
-        }
-			printf("process[%d]>>BurstTime[%d]>>arrivalTime[%d]\n\n",p[process].p,p[process].B,p[process].A);
-    }
-    fclose(f);//close the file after reading
-    printf("number of process if %d",process);
- ////////////////////////////////////////////////////////////////////////////////////////////////////
-// int u,v=1;
-//    for (int d=0;d<=maxBurst;d++)
-//			{
-//			for (u=1;u<=process;u++)
-//			{ 
-//				if (p[u].A==d)
-//				{							
-//							ppi[v].p=p[u].p;//1					//processess in order depending Arrival Time
-//							ppi[v].A=p[u].A;//
-//							ppi[v].B=p[u].B;//
-//							totalBurstTime+=p[u].B;
-//					if(minarr>ppi[v].A)
-//					{
-//						minarr=ppi[v].A;
-//					}
-//					if(maxarr<ppi[v].A)
-//					{
-//						maxarr=ppi[v].A;
-//					}		
-//						v++;	
-//					}				
-//			}	
-//		}
-//		 for (int d = 1; d <= process; d++) {
-//        printf("\n<process[%d]\t<ArrivalTime:[%d]\t<BusrtTime:[%d]\n\n", ppi[d].p, ppi[d].A, ppi[d].B);
-//    				}	
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-int i,l=0,timer=0;
-printf("%d>>\n",p[1].B);
-int j=1;
-int minBurs=p[1].B;
-while(timer<=1)
-{
-			for (i=1;i<=process;i++)
-		{
-			//put the process has the time x in the struct 
-						if (p[i].A==timer )
-							{
-						ppi[j].A=p[i].A;
-						ppi[j].B=p[i].B;
-						ppi[j].p=p[i].p;
-						l++;
-						j++;
-							}
-		}
-		for(int i=1;i<=l;i++)
+		printf("--------------\nprocessess at time {%d}\n",timer);
+			for(int i=1;i<=process;i++)
 	{
-		printf("<process[%d]\t<ArrivalTime:[%d]\t<BusrtTime:[%d]\n", ppi[i].p, ppi[i].A, ppi[i].B);	
-	}
-
-
-		//put process with same time in order depending on burst time
-		int v=0,u ,n=0;
-		    for (int d=0;d<=maxarr;d++)
-				{
-					  for (u=1;u<=l;u++)
-					{ 
-							if (ppi[u].B==d )
-							{	
-										v++;				
-										result[v].p=ppi[u].p;	
-										result[v].A=ppi[u].A;
-										result[v].B=ppi[u].B;	
-										printf("<process[%d]\t<ArrivalTime:[%d]\t<BusrtTime:[%d]\n", result[v].p, result[v].A, result[v].B);
-										n++;	
-						   }			
-					}	
-				}
-				printf("process with Time{%d}\n",timer);
-		for (int i=1;i<=process&&result[i].p!=NULL;i++)
+		if (ppi[i].A<=timer)
 		{
-		        printf("<process[%d]\t<ArrivalTime:[%d]\t<BusrtTime:[%d]\n", result[i].p, result[i].A, result[i].B);	
+			//first time 
+			if(burstTime2==0 && start==false)
+			{
+				burstTime2=ppi[i].B;
+				pp=&ppi[i].B;
+				ppi[i].wait=0;
+				ppi[i].t=true;
+				start=true;
+			}
+			//other times
+			else if(burstTime2>ppi[i].B&&*pp!=0)
+					{
+						burstTime2=ppi[i].B;
+						pp=&ppi[i].B;
+						if(ppi[i].t==false)
+						{
+							ppi[i].wait=counterwait;
+							ppi[i].t=true;
+						}
+						//*pp-=1;		
+					}
+					else if(burstTime2==ppi[i].B&&*pp!=0)
+					{
+						//*pp-=1;
+					}
+			  
+			printf("****process[%d]\t burstTime[%d]\t arrivalTime%d\n",ppi[i].p,ppi[i].B,ppi[i].A);
 		}
-		timer++;
+			
+	}
+	printf("the pointer is >>%d\n",*pp);
+	if (*pp!=0)
+		*pp-=1;
+
+	timer++;
+	counterwait++;
 }
+ for (int d = 1; d <= process; d++) {
+        printf("\n<process[%d]\t<ArrivalTime:[%d]\t<BusrtTime:[%d]\t waitTime>>%d\n\n", ppi[d].p, ppi[d].A, ppi[d].B,ppi[d].wait);
+    				}
+	
+	
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
