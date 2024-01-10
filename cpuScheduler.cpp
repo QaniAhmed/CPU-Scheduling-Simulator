@@ -76,6 +76,108 @@ struct node* insertBack(struct node *header,int process,int Burst,int arrival)
 					
 			return header;
 }
+struct node * ArrivalBubbleSort(struct node* header)
+{
+	struct node *lastnode ,*currentNode ,*nextNode;
+	int tempProcess,tempBurst,tempArrival,tempWait;
+	
+	for (lastnode=NULL; lastnode!=header->next; lastnode=currentNode)
+	{
+		for (currentNode=header; currentNode->next!=lastnode ;currentNode=currentNode->next)
+		{
+			nextNode=currentNode->next;
+			if (currentNode->arrival > nextNode->arrival )
+			{
+				tempProcess=currentNode->process;
+				tempBurst=currentNode->Burst;
+				tempArrival=currentNode->arrival;
+				
+				currentNode->process=nextNode->process;
+				currentNode->Burst=nextNode->Burst;
+				currentNode->arrival=nextNode->arrival;
+				
+				nextNode->process=tempProcess;
+				nextNode->Burst=tempBurst;
+				nextNode->arrival=tempArrival;	
+			}
+		}
+		
+	}
+	return header;
+
+}
+int findMinarrivalTime(struct node* temp,int maxArrivalAime)
+{
+	int minarr=maxArrivalAime;
+	while(temp!=NULL)
+	{
+		if (temp->arrival<minarr)
+			minarr=temp->arrival;
+		temp=temp->next;
+	}
+	return minarr;
+}
+struct node* ReadFile(FILE *f,int *maxarr,int *TotalBurstTime,int *process1)
+{
+	int process0=1;
+	struct node *temp=NULL; 
+		int process,Burst,arrival;
+
+char arr[100];
+char bu[100];
+char c;
+int j,k,i=1,count=1;
+    if (f == NULL) {
+        perror("Error opening file");
+        exit(1);
+    }
+	   while (1) {
+        int c = fgetc(f);
+
+        if (c == EOF) {
+            break;  
+        }
+
+        if (c == ':') {
+            continue;
+        }
+
+        char bu[10000],arr[10000];
+        int count = 0;
+
+        while (c != ':' && c != EOF) {
+            bu[count++] = c;
+            c = fgetc(f);
+        }
+		c=fgetc(f);
+        bu[count] = '\0'; 
+        
+        sscanf(bu, "%d", &Burst);
+        *TotalBurstTime+=Burst;
+        // Read the second number (arrival time)
+        count = 0;
+        while (c != ':' && c != EOF) {
+            arr[count++] = c;
+            c = fgetc(f);
+        }
+        arr[count] = '\0';
+        sscanf(arr, "%d", &arrival);
+        if(arrival>*maxarr)
+        {
+        	*maxarr=arrival;
+		}
+        while (c != '\n' && c != EOF) {
+            c = fgetc(f);
+        }
+temp=insertBack(temp,process0,Burst,arrival);
+
+        process++;
+        process0 ++;
+    }
+    *process1=process0;
+    fclose(f);
+    return temp;
+}
 char inputFile[100],outputFile[100];
 void Read(char IOpath[] );
 void logo();
@@ -123,22 +225,17 @@ int main(int argc ,char * argv[])
 				 	printf("try agian use -o[output file]");
 				 	exit(1);
 				 }
-				 		
-				
-				
 int choise;
 printf("\n\n\n");
 system("@cls||clear");
 logo();
 bool end =false;
-char schedulingMethod [100]="none",Preemptivemethod [100]="Preemptive";
-             //f=fopen(inputFile,"r");                  
-while (end==false){
-                                                                                                                                                                                                                                                                        
+char schedulingMethod [100]="none",Preemptivemethod [100]="non-Preemptive";             
+while (end==false){                                                                                                                                                                                                                                                      
 printf("\n1)Scheduling Method(%s)\n2)Preemptive Mode(%s)\n3)Show Result\n4)End Program\nOption>",schedulingMethod,Preemptivemethod);
 scanf("%d",&choise);
 int method=0,columns=0;
-bool back=false;//,change = false;
+bool back=false;
 int proc=0,count=1;
 			char c;
 int times [] ={0,1,1,2,3};
@@ -146,7 +243,7 @@ int times [] ={0,1,1,2,3};
 switch (choise)
 {
 	case 1:
-	//	system("@cls||clear"); //use to clear the terminal
+	//system("@cls||clear"); //use to clear the terminal
 	while(back!=true){
 		printf("\nplese select one of the methods below :\n");
 		printf("(1) First Come, First Served Scheduling\n(2) Shortest-Job-First Scheduling\n(3)Priority Scheduling\n(4)Round-Robin Scheduling\n(5)Back\nOption>>");
@@ -154,23 +251,23 @@ switch (choise)
 		switch (method)
 		{
 			case 1:
-				system("@cls||clear");
-				strcpy(schedulingMethod,"First Come, First Served Scheduling");
+				
+				strcpy(schedulingMethod,"\033[0;32mFirst Come, First Served Scheduling\033[0m");
 				printf("\n>> you selcted method: %d,press back <<\n",method);
 				break;
 			case 2:
-				system("@cls||clear");
-				strcpy(schedulingMethod,"Shortest-Job-First Scheduling");
+				
+				strcpy(schedulingMethod,"\033[0;32mShortest-Job-First Scheduling\033[0m");
 				printf("\n>> you selcted method: %d,press back <<\n",method);
 				break;
 			case 3:
-				system("@cls||clear");
-				strcpy(schedulingMethod,"Priority Scheduling");
+				
+				strcpy(schedulingMethod,"\033[0;32mPriority Scheduling\033[0m");
 				printf("\n>> you selcted method: %d,press back <<\n",method);
 				break;
 			case 4:
-				system("@cls||clear");
-				strcpy(schedulingMethod,"Round-Robin Scheduling");
+				
+				strcpy(schedulingMethod,"\033[0;32mRound-Robin Scheduling\033[0m");
 				printf("\n>> you selcted method: %d,press back <<\n",method);
 				break;
 				
@@ -257,94 +354,34 @@ printf("     CCC::::::::::::CP::::::::P              UU:::::::::UU /:::::/      
 printf("        CCCCCCCCCCCCCPPPPPPPPPP                UUUUUUUUU  ///////              SSSSSSSSSSSSSSS    SSSSSSSSSSSSSSS      \n\n\n\n");
 	
 }
-	
-//read from the input file
-
 int FCFS(char*inputFile)
 {
-int process,Burst,arrival;
-struct node *header=NULL;
+	
+	int process,Burst,arrival,TotalBurstTime=0,maxarr=0,minarr;
+	struct node *header=NULL;
 	FILE *f;
-f=fopen(inputFile,"r"); 
-int process0=1;
-char arr[100];
-char bu[100];
-char c;
-int j,k,i=1,count=1,TotalBurstTime=0,maxarr=0,minarr;
-    if (f == NULL) {
-        perror("Error opening file");
-        return 1;
-    }
-    while (1) {
-        int c = fgetc(f);
+	f=fopen(inputFile,"r"); 
+	display(header);
+	int process0=1,back=1;
+    header=ReadFile(f,&maxarr,&TotalBurstTime,&process0);
+    display(header);
+    minarr=findMinarrivalTime(header,maxarr);
+	display(header);
+	int count0=countlinklist(header);
+/////////////////////////////////////////////////////////////////////////
 
-        if (c == EOF) {
-            break;  
-        }
+		/*sorted depend on arrival time*/
+		
+		printf("\n-----after sorted-----\n");
+		header=ArrivalBubbleSort(header);
+		display(header);
 
-        if (c == ':') {
-            continue;
-        }
+//////////////////////////////////////////////////////////////////////// 
 
-        char bu[10000],arr[10000];
-        int count = 0;
-
-        while (c != ':' && c != EOF) {
-            bu[count++] = c;
-            c = fgetc(f);
-        }
-		c=fgetc(f);
-        bu[count] = '\0'; 
-        
-        sscanf(bu, "%d", &Burst);
-        // Read the second number (arrival time)
-        count = 0;
-        while (c != ':' && c != EOF) {
-            arr[count++] = c;
-            c = fgetc(f);
-        }
-        arr[count] = '\0';
-        sscanf(arr, "%d", &arrival);
-        if(arrival>maxarr)
-        {
-        	maxarr=arrival;
-        	minarr=maxarr;
-		}
-        while (c != '\n' && c != EOF) {
-            c = fgetc(f);
-        }
-header=insertBack(header,process0,Burst,arrival);
-TotalBurstTime=TotalBurstTime+Burst;
-        process++;
-        process0 ++;
-    }
-    fclose(f);
-display(header);
-int count0=countlinklist(header);
-///////////////////////////////////////////////////////////////////////
-struct node *sorted=NULL;
-    int u , v=0,done=0, time=0;
-    struct node *temp=header;
-    for (int d = 0; d <= maxarr; d++) {
-        for (int u = 1; u <= count0; u++) {
-            if (temp->arrival == d) {
-                sorted = insertBack(sorted, temp->process, temp->Burst, temp->arrival);
-                if(minarr>temp->arrival)
-                	minarr=temp->arrival;
-                time += temp->Burst;
-                done++;
-            }
-            temp = temp->next;
-        }
-        temp = header;
-        if (time >= TotalBurstTime)
-            break;
-		}
-		printf("\n----------\n");
-		display(sorted);
-///////////////////////////////////////////////////////////////////// 
-time=minarr;
-int waitTime=0;
+									/*caculate the waiting time*/
+int time=minarr;  
+int waitTime=0,done;
+struct node * temp=header;
 float TotalaWaitTime=0;
 for (int timer = minarr; timer <= maxarr; timer++) {
         for (int u = 1; u <= count0; u++) {
@@ -355,28 +392,22 @@ for (int timer = minarr; timer <= maxarr; timer++) {
             	if(waitTime<0)
             	{
 				waitTime=0;
-				time++;
+				//time++;
 				}
             	temp->wt=waitTime;
                 	printf("\n<<process[%d] at time[%d] buratTime[%d] arrivalTime[%d] \twait[%d]\n",temp->process,timer,temp->Burst,temp->arrival,temp->wt);
-                		time +=temp->Burst;//8
+                		time +=temp->Burst;
                 TotalaWaitTime+=waitTime;
-                
-				
                 printf("\n\tTime>>%d\t\n",time);
                 done++;
             }
             temp = temp->next;
         }
         temp = header;
-        if (time >= TotalBurstTime)
-            break;
 		}
 //////////////////////////////////////////////////////////////////////
-struct node *order;
-order=header;				
-int checkall=1;	//check all process from 1					     	/* show the result in order */
-done=1;//to check how many prcoess d
+										/* show the result in order */
+																		     	
 system("@cls||clear");
 printf("\t+------------------------------------------------------+\n");
 printf("\t¦Scheduling Method: Shortest Job First – Non-Preemptive¦\n");
@@ -384,12 +415,19 @@ printf("\t+--------------------------------------------------------+\n");
 printf("\nprocess\twatitngTime\n\n");
 displayResult(header);
 printf("Average Waiting Time:  :%f ms\n",TotalaWaitTime/count0);
+while(back)
+{
+	printf("\n\n\nEnter 0 to Back to the menue >>>>");
+scanf("%d",&back);
+}
+system("@cls||clear");
+logo1();
 
 	return 0;
-}
-			
+	
 
-////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+}
 
 
 
