@@ -18,427 +18,38 @@ struct node {
 	int priority;
 	struct node * next;
 };
-struct node* Create(int process,int Burst,int arrival)
-{
-	struct node * temp;
-	temp=(struct node*) malloc(sizeof(struct node));
-	temp->process=process;
-	temp->Burst=Burst;
-	temp->arrival=arrival;
-	temp->next=NULL;
-	return temp;
-
-}
-struct node* CreateWithpriority(int process,int Burst,int arrival,int priority)
-{
-	struct node * temp;
-	temp=(struct node*) malloc(sizeof(struct node));
-	temp->process=process;
-	temp->Burst=Burst;
-	temp->arrival=arrival;
-	temp->priority=priority;
-	temp->next=NULL;
-	return temp;
-
-}
-void display(struct node* temp)
-{
-	while(temp!=NULL)
-	{
-			printf("%d ",temp->process);
-			printf("%d  ",temp->Burst);
-			printf("%d  ",temp->arrival);
-			printf("----->\n");
-	temp=temp->next;
-	}
-
-}
-void displayResult(struct node* temp)
-{
-	while(temp!=NULL)
-	{
-			printf("P%d ",temp->process);
-			printf("waitTime [%d] ",temp->wt);
-			printf("\n");
-	temp=temp->next;
-	}
-
-}
-int  countlinklist(struct node* temp)
-{
-		int count=0;
-		while(temp!=NULL)
-		{
-			count++;
-		temp=temp->next;
-		}
-		return count;
-}
-struct node* insertBack(struct node *header,int process,int Burst,int arrival)
-{
-			struct node* newNode=Create(process,Burst,arrival);
-			struct node *temp;
-			if (header==NULL)
-			{
-						header = newNode;
-						return header;
-			}
-			temp=header;
-				while(temp->next != NULL)
-					{
-						temp=temp->next;
-					}
-					temp->next = newNode;
-					
-			return header;
-}
+													/*function*/
+struct node* Create(int process,int Burst,int arrival);
+struct node* CreateWithpriority(int process,int Burst,int arrival,int priority);
+void display(struct node* temp);
+void displayResult(struct node* temp);
+void displayResult2(struct node* temp,FILE *q);
+int  countlinklist(struct node* temp);
+struct node* insertBack(struct node *header,int process,int Burst,int arrival);
 //sort depending on priority
-struct node * priorityBubbleSort(struct node* header)
-{
-	struct node *lastnode ,*currentNode ,*nextNode;
-	int tempProcess,tempBurst,tempArrival,tempWait,tempPriority;
-	
-	for (lastnode=NULL; lastnode!=header->next; lastnode=currentNode)
-	{
-		for (currentNode=header; currentNode->next!=lastnode ;currentNode=currentNode->next)
-		{
-			nextNode=currentNode->next;
-			if (currentNode->priority > nextNode->priority )
-			{
-				tempProcess=currentNode->process;
-				tempBurst=currentNode->Burst;
-				tempArrival=currentNode->arrival;
-				tempPriority=currentNode->priority;
-				
-				currentNode->process=nextNode->process;
-				currentNode->Burst=nextNode->Burst;
-				currentNode->arrival=nextNode->arrival;
-				currentNode->priority=nextNode->priority;
-				
-				nextNode->process=tempProcess;
-				nextNode->Burst=tempBurst;
-				nextNode->arrival=tempArrival;	
-				nextNode->priority=tempPriority;
-			}
-//			if (currentNode->Burst == nextNode->Burst && currentNode->arrival > nextNode->arrival)
-//			{
-//				tempProcess=currentNode->process;
-//				tempBurst=currentNode->Burst;
-//				tempArrival=currentNode->arrival;
-//				
-//				currentNode->process=nextNode->process;
-//				currentNode->Burst=nextNode->Burst;
-//				currentNode->arrival=nextNode->arrival;
-//				
-//				nextNode->process=tempProcess;
-//				nextNode->Burst=tempBurst;
-//				nextNode->arrival=tempArrival;	
-//			}
-		}
-		
-	}
-	return header;
-
-}
-struct node* insertBack2(struct node *header,int process,int Burst,int arrival,int priority)
-{
-			struct node* newNode=CreateWithpriority(process,Burst,arrival,priority);
-			struct node *temp;
-			if (header==NULL)
-			{
-						header = newNode;
-						return header;
-			}
-			temp=header;
-				while(temp->next != NULL)
-					{
-						temp=temp->next;
-					}
-					temp->next = newNode;
-					
-			return header;
-}
-void displaywithPriority(struct node* temp)
-{
-	while(temp!=NULL)
-	{
-			printf("%d ",temp->process);
-			printf("%d  ",temp->Burst);
-			printf("%d  ",temp->arrival);
-			printf("%d  ",temp->priority);
-			printf("----->\n");
-	temp=temp->next;
-	}
-
-}
-
-struct node * ArrivalBubbleSort(struct node* header)
-{
-	struct node *lastnode ,*currentNode ,*nextNode;
-	int tempProcess,tempBurst,tempArrival,tempWait;
-	
-	for (lastnode=NULL; lastnode!=header->next; lastnode=currentNode)
-	{
-		for (currentNode=header; currentNode->next!=lastnode ;currentNode=currentNode->next)
-		{
-			nextNode=currentNode->next;
-			if (currentNode->arrival > nextNode->arrival )
-			{
-				tempProcess=currentNode->process;
-				tempBurst=currentNode->Burst;
-				tempArrival=currentNode->arrival;
-				
-				currentNode->process=nextNode->process;
-				currentNode->Burst=nextNode->Burst;
-				currentNode->arrival=nextNode->arrival;
-				
-				nextNode->process=tempProcess;
-				nextNode->Burst=tempBurst;
-				nextNode->arrival=tempArrival;	
-			}
-		}
-		
-	}
-	return header;
-
-}
-int findMinarrivalTime(struct node* temp,int maxArrivalAime)
-{
-	int minarr=maxArrivalAime;
-	while(temp!=NULL)
-	{
-		if (temp->arrival<minarr)
-			minarr=temp->arrival;
-		temp=temp->next;
-	}
-	return minarr;
-}
+struct node * priorityBubbleSort(struct node* header);
+struct node* insertBack2(struct node *header,int process,int Burst,int arrival,int priority);
+void displaywithPriority(struct node* temp);
+struct node * ArrivalBubbleSort(struct node* header);
+int findMinarrivalTime(struct node* temp,int maxArrivalAime);
 //sort depending on Burst Time
-struct node * BurstBubbleSort(struct node* header)
-{
-	struct node *lastnode ,*currentNode ,*nextNode;
-	int tempProcess,tempBurst,tempArrival,tempWait;
-	
-	for (lastnode=NULL; lastnode!=header->next; lastnode=currentNode)
-	{
-		for (currentNode=header; currentNode->next!=lastnode ;currentNode=currentNode->next)
-		{
-			nextNode=currentNode->next;
-			if (currentNode->Burst > nextNode->Burst )
-			{
-				tempProcess=currentNode->process;
-				tempBurst=currentNode->Burst;
-				tempArrival=currentNode->arrival;
-				
-				currentNode->process=nextNode->process;
-				currentNode->Burst=nextNode->Burst;
-				currentNode->arrival=nextNode->arrival;
-				
-				nextNode->process=tempProcess;
-				nextNode->Burst=tempBurst;
-				nextNode->arrival=tempArrival;	
-			}
-//			if (currentNode->Burst == nextNode->Burst && currentNode->arrival > nextNode->arrival)
-//			{
-//				tempProcess=currentNode->process;
-//				tempBurst=currentNode->Burst;
-//				tempArrival=currentNode->arrival;
-//				
-//				currentNode->process=nextNode->process;
-//				currentNode->Burst=nextNode->Burst;
-//				currentNode->arrival=nextNode->arrival;
-//				
-//				nextNode->process=tempProcess;
-//				nextNode->Burst=tempBurst;
-//				nextNode->arrival=tempArrival;	
-//			}
-		}
-		
-	}
-	return header;
-
-}
+struct node * BurstBubbleSort(struct node* header);
 //sort depend on process to show result in order
-struct node * ProcessBurstBubbleSort(struct node* header)
-{
-	struct node *lastnode ,*currentNode ,*nextNode;
-	int tempProcess,tempBurst,tempArrival,tempWait;
-	
-	for (lastnode=NULL; lastnode!=header->next; lastnode=currentNode)
-	{
-		for (currentNode=header; currentNode->next!=lastnode ;currentNode=currentNode->next)
-		{
-			nextNode=currentNode->next;
-			if (currentNode->process > nextNode->process )
-			{
-				tempProcess=currentNode->process;
-				tempBurst=currentNode->Burst;
-				tempArrival=currentNode->arrival;
-				tempWait=currentNode->wt;
-				
-				currentNode->process=nextNode->process;
-				currentNode->Burst=nextNode->Burst;
-				currentNode->arrival=nextNode->arrival;
-				currentNode->wt = nextNode->wt;
-				
-				nextNode->process=tempProcess;
-				nextNode->Burst=tempBurst;
-				nextNode->arrival=tempArrival;	
-				nextNode->wt =tempWait;
-			}
-		}
-		
-	}
-	return header;
-
-}
-struct node* ReadFile(FILE *f,int *maxarr,int *TotalBurstTime,int *process1)
-{
-	int process0=1;
-	struct node *temp=NULL; 
-		int process,Burst,arrival,priority;
-
-char arr[100];
-char bu[100];
-char pri[100];
-char c;
-int j,k,i=1,count=1;
-    if (f == NULL) {
-        perror("Error opening file");
-        exit(1);
-    }
-	   while (1) {
-        int c = fgetc(f);
-
-        if (c == EOF) {
-            break;  
-        }
-
-        if (c == ':') {
-            continue;
-        }
-
-        char bu[10000],arr[10000],pri[10000];
-        int count = 0;
-
-        while (c != ':' && c != EOF) {
-            bu[count++] = c;
-            c = fgetc(f);
-        }
-		c=fgetc(f);
-        bu[count] = '\0'; 
-        
-        sscanf(bu, "%d", &Burst);
-        *TotalBurstTime+=Burst;
-        // Read the second number (arrival time)
-        count = 0;
-        while (c != ':' && c != EOF) {
-            arr[count++] = c;
-            c = fgetc(f);
-        }
-        arr[count] = '\0';
-        sscanf(arr, "%d", &arrival);
-        if(arrival>*maxarr)
-        {
-        	*maxarr=arrival;
-		}
-       	c=fgetc(f);
-		//read Priority
-		count=0;
-        while (c != '\n' && c != EOF) {
-        	pri[count++] = c;
-            c = fgetc(f);
-        }
-        pri[count] = '\0';
-        sscanf(pri, "%d", &priority);
-temp=insertBack2(temp,process0,Burst,arrival,priority);
-
-        process++;
-        process0 ++;
-    }
-    *process1=process0;
-    fclose(f);
-    return temp;
-}
-struct node* ReadFile2(FILE *f,int *maxarr,int *TotalBurstTime)
-{
-	struct node *temp=NULL; 
-		int process,Burst,arrival;
-int process0=1;
-char arr[100];
-char bu[100];
-char c;
-int j,k,i=1,count=1;
-    if (f == NULL) {
-        perror("Error opening file");
-        exit(1);
-    }
-	   while (1) {
-        int c = fgetc(f);
-
-        if (c == EOF) {
-            break;  
-        }
-
-        if (c == ':') {
-            continue;
-        }
-
-        char bu[10000],arr[10000];
-        int count = 0;
-
-        while (c != ':' && c != EOF) {
-            bu[count++] = c;
-            c = fgetc(f);
-        }
-		c=fgetc(f);
-        bu[count] = '\0'; 
-        
-        sscanf(bu, "%d", &Burst);
-        *TotalBurstTime+=Burst;
-        // Read the second number (arrival time)
-        count = 0;
-        while (c != ':' && c != EOF) {
-            arr[count++] = c;
-            c = fgetc(f);
-        }
-        arr[count] = '\0';
-        sscanf(arr, "%d", &arrival);
-        if(arrival>*maxarr)
-        {
-        	*maxarr=arrival;
-		}
-        while (c != '\n' && c != EOF) {
-            c = fgetc(f);
-        }
-temp=insertBack(temp,process0,Burst,arrival);
-
-        process++;
-        process0 ++;
-    }
-    fclose(f);
-    return temp;
-}
-
-int FindWt(struct node* header,struct node *LL,int key,int tat)
-{
-	
-	while(LL->process!=key)
-	{
-		LL=LL->next;
-	}
-	int wt= tat - LL->Burst;
-	return wt;
-}
-int sjfPreeptive(char* inputFile);
-
+struct node * ProcessBurstBubbleSort(struct node* header);
+struct node* ReadFile(FILE *f,int *maxarr,int *TotalBurstTime,int *process1);
+struct node* ReadFile2(FILE *f,int *maxarr,int *TotalBurstTime);
+int FindWt(struct node* header,struct node *LL,int key,int tat);
 char inputFile[100],outputFile[100];
 void Read(char IOpath[] );
 void logo();
 void logo1();
-int FCFS(char*inputFile);
-int sjfNonpreeptive(char * inputFile);
-int pri(char *inputFile);
+												/*cpu scheduling methods*/
+int FCFS(char*inputFile,char* outputFile);
+int sjfNonpreeptive(char * inputFile,char* outputFile);
+int sjfPreeptive(char* inputFile,char* outputFile);
+int PriorityNonPreemptive(char *inputFile,char* outputFile);
+int PriorityPreemptive(char *inputFile,char* outputFile);
+
 int main(int argc ,char * argv[])
 {
 	
@@ -556,47 +167,64 @@ switch (choise)
 			preemethod=true;
 			//break;
 		}
+		if (method==2)
+		{
+			//system("@cls||clear");
+			strcpy(Preemptivemethod,"\033[0;32mNon-Preemptive(Default)\033[0m");
+			printf("\n>> you selcted method: %d,press back <<\n",method);
+			preemethod=true;
+			//break;
+		}
 	}
 	system("@cls||clear");
 	logo1();
 	break;
 	case 3:
-		//pri();
 		switch(methodSelected)
 		{
 			case 1: 
-			FCFS(inputFile);
+			if(preemethod==false)
+			FCFS(inputFile,outputFile);
+			 if(preemethod==true)
+			{
+				printf("\nwhen process enters process will enters the ready queue first is executed first.\n");
+				printf("There is no Preemptive mode just non-Preemptive!");
+				sleep(5);
+				FCFS(inputFile,outputFile);
+				
+			}
 			break;
 			case 2 :
-				if(methodSelected==2&&preemethod==false)
-			sjfNonpreeptive(inputFile);
-			else if(methodSelected==2&&preemethod==true)
-			sjfPreeptive(inputFile);
+				if(preemethod==false)
+			sjfNonpreeptive(inputFile,outputFile);
+			else if(preemethod==true)
+			sjfPreeptive(inputFile,outputFile);
 			break;
 			case 3 : 
-			pri(inputFile);
+			if(preemethod==false)
+				PriorityNonPreemptive(inputFile,outputFile);
+			else
+				PriorityPreemptive(inputFile,outputFile);
 			break;
 			default:
 				printf("\033[0;31m\nSelect a method first !\n\033[0m");
 		}
-//		printf("%d",methodSelected);
-//		if (methodSelected==0)
-//				printf("\033[0;31m\nSelect a method first !\n\033[0m");
-// 			else if(methodSelected==1)
-//				FCFS(inputFile);
-//			else if(methodSelected==2&&preemethod==false)
-//			sjfNonpreeptive(inputFile);
-//			else if(methodSelected==2&&preemethod==true)
-//			sjfPreeptive(inputFile);
+
 				
 	break;
 
 	case 4:
+		FILE *show = fopen(outputFile, "r");
+char buffer[255];
+rewind(show);
+while (fgets(buffer, 255, show) != NULL) // Removed the semicolon here
+{
+    printf("%s", buffer);
+}
+fclose(show);
+		
 		printf("\nGood bye ^-^\n");
-		return 0;
-		
-		
-		
+		return 0;	
 }		
 
 }
@@ -640,12 +268,14 @@ printf("     CCC::::::::::::CP::::::::P              UU:::::::::UU /:::::/      
 printf("        CCCCCCCCCCCCCPPPPPPPPPP                UUUUUUUUU  ///////              SSSSSSSSSSSSSSS    SSSSSSSSSSSSSSS      \n\n\n\n");
 	
 }
-int FCFS(char*inputFile)
+int FCFS(char*inputFile,char*outputFile)
 {
 	
 	int process,Burst,arrival,TotalBurstTime=0,maxarr=0,minarr;
 	struct node *header=NULL;
 	FILE *f;
+	FILE *q;
+
 	f=fopen(inputFile,"r"); 
 	display(header);
 	int process0=1,back=1;
@@ -705,6 +335,14 @@ printf("\t+--------------------------------------------------------+\n");
 printf("\nprocess\twatitngTime\n\n");
 displayResult(header);
 printf("\033[0;32mAverage Waiting Time:  :%f ms\033[0m\n",TotalaWaitTime/count0);
+////////////
+	q=fopen(outputFile,"a");
+    fprintf(q, "First come first served");
+        displayResult2(header,q);
+    fprintf(q, "Average Waiting Time:  :%f ms\n", TotalaWaitTime/count0);
+
+    
+    fclose(q);
 while(back)
 {
 	printf("\n\n\nEnter 0 to Back to the menue >>>>");
@@ -719,12 +357,13 @@ logo1();
 //////////////////////////////////////////////////////////////////////
 }
 
-int  sjfNonpreeptive(char * inputFile)
+int  sjfNonpreeptive(char * inputFile,char* outputFile)
 {
 	int maxarr=0,minarr,TotalBurstTime=0,back=1;
 	int process;
 struct node *header=NULL;
 	FILE *f;
+	FILE *q;
 f=fopen(inputFile,"r"); 
 display(header);
     header=ReadFile(f,&maxarr,&TotalBurstTime,&process);
@@ -780,12 +419,17 @@ for (int timer =minarr; timer <= TotalBurstTime;)
 		system("@cls||clear");
 printf("\t+------------------------------------------------------+\n");
 printf("\t¦Scheduling Method: Shortest Job First – Non-Preemptive¦\n");
-printf("\t+--------------------------------------------------------+");
-printf("\nprocess\twatitngTime\n\n");
+printf("\t+--------------------------------------------------------+\n");
 		displayResult(header);
 		printf("\n\033[0;32mAverage Waiting Time:  :%f ms\033[0m\n",TotalaWaitTime/count0);
 		
 //////////////////////////////////////////////////////////////////////
+q=fopen(outputFile,"a");
+    fprintf(q, "Shortest Job First – Non-Preemptive\n");
+        displayResult2(header,q);
+    fprintf(q, "Average Waiting Time:  :%f ms\n", TotalaWaitTime/count0);
+    fclose(q);
+///////////////////////////////////////////////////////////////////////
 while(back)
 {
 	printf("\n\n\nEnter 0 to Back to the menue >>>>");
@@ -798,13 +442,14 @@ logo1();
 }
 
 
-int sjfPreeptive(char* inputFile)
+int sjfPreeptive(char *inputFile,char* outputFile)
 {
 		struct node * RQ=NULL;
 	int maxarr=0,minarr,TotalBurstTime=0;
 	struct node * head;
 struct node *header=NULL;
 	FILE *f;
+	FILE *q;
 f=fopen(inputFile,"r"); 
 struct node * LL=NULL;
     header=ReadFile2(f,&maxarr,&TotalBurstTime);
@@ -905,11 +550,17 @@ for (int timer = 0; timer <= TotalBurstTime; timer++) {
 system("@cls||clear");
 printf("\t+------------------------------------------------------+\n");
 printf("\t¦Scheduling Method: Shortest Job First –Preemptive¦\n");
-printf("\t+--------------------------------------------------------+");
+printf("\t+--------------------------------------------------------+\n");
 printf("\nprocess\twatitngTime\n\n");
 		displayResult(header);
-		
 		printf("\n\033[0;32mAverage Waiting Time:  :%f ms\033[0m\n",TWT/count0);
+///////////////////////////////////////////////////////
+		q=fopen(outputFile,"a");
+    fprintf(q, "Shortest Job First –Preemptive\n");
+      displayResult2(header,q);
+    fprintf(q, "Average Waiting Time:  :%f ms\n", TWT/count0);
+    fclose(q);
+//////////////////////////////////////////////////
 		int back=true;
 		while(back)
 {
@@ -921,11 +572,12 @@ logo1();
 return 0 ;
 ////////////////////////////////////////////////////////////////////
 }
-int pri(char * inputFile)
+int PriorityNonPreemptive(char *inputFile,char* outputFile)
 {
 	int maxarr=0,minarr,TotalBurstTime=0;
 struct node *header=NULL;
 	FILE *f;
+	FILE *q;
 	int process;
 f=fopen(inputFile,"r"); 
     header=ReadFile(f,&maxarr,&TotalBurstTime,&process);
@@ -985,12 +637,603 @@ for (int timer =minarr; timer <= TotalBurstTime;)
 		system("@cls||clear");
 printf("\t+------------------------------------------------------+\n");
 printf("\t¦Scheduling Method: Priority Scheduling – Non-Preemptive¦\n");
-printf("\t+--------------------------------------------------------+");
+printf("\t+--------------------------------------------------------+\n");
 printf("\nprocess\twatitngTime\n\n");
 ProcessBurstBubbleSort(header);
 		displayResult(header);
-		printf("\nAverage Waiting Time:  :%f ms\n",TotalaWaitTime/count0);
+				printf("\n\033[0;32mAverage Waiting Time:  :%f ms\033[0m\n",TotalaWaitTime/count0);
 		
 //////////////////////////////////////////////////////////////////////////
+	q=fopen(outputFile,"a"); 
+    fprintf(q, "Priority Scheduling – Non-Preemptive");
+       displayResult2(header,q);
+    fprintf(q, "Average Waiting Time:  :%f ms\n", TotalaWaitTime/count0);
+    fclose(q);
+/////////////////////////////////////////////////////////////////////////    /
+int back=1;
+		while(back)
+{
+	printf("\n\n\nEnter 0 to Back to the menue >>>>");
+scanf("%d",&back);
+}
+system("@cls||clear");
+logo1();
+
 return 0;
 }
+int PriorityPreemptive(char *inputFile,char* outputFile)
+{
+		int process=0;
+	struct node * RQ=NULL;
+	int maxarr=0,minarr,TotalBurstTime=0;
+	struct node * head;
+struct node *header=NULL;
+	FILE *f;
+	FILE *q;
+f=fopen(inputFile,"r"); 
+struct node * LL=NULL;
+    header=ReadFile(f,&maxarr,&TotalBurstTime,&process);
+    f=fopen(inputFile,"r"); 
+    LL=ReadFile2(f,&maxarr,&TotalBurstTime);
+	minarr=findMinarrivalTime(header,maxarr);
+	displaywithPriority(header);
+	int count0=countlinklist(header);
+	int realtime=0;
+	header=priorityBubbleSort(header);
+	displaywithPriority(header);
+	struct node * temp;
+	temp=header;
+int timer,finalprocess,finalwt;
+int clock=0;
+
+											/*before all process come*/
+	for (timer=1;timer<=maxarr ;timer++)
+	{
+		for (int u = 1; u <= count0 ; u++) 
+			{
+				if (temp->arrival <= clock &&temp->flag!=true  ) //flag ==completed
+				     {
+				    
+				     
+							
+				     		temp->Burst--;//subtract burst time
+						 if (temp->first==false)//to take just the first wait time
+						 {
+						 	temp->wt=clock-temp->arrival;
+						 	temp->first=true;
+						 }
+						 printf("\n<<process[%d] pre[%d] at clock[%d] buratTime[%d] arrivalTime[%d] \twaittime[%d]\t\n",temp->process,temp->priority,clock,temp->Burst,temp->arrival,temp->wt);
+
+				 
+				            if (temp->Burst<=0)
+				     			temp->flag=true;
+						 header=priorityBubbleSort(header);
+						 clock++;
+				            break;
+				     }
+				     
+				     temp=temp->next;
+		}
+		//clock++;
+		temp=header;
+	}	
+finalprocess=temp->process;
+finalwt=temp->wt;
+	display(header);
+	header=priorityBubbleSort(header);
+	displaywithPriority(header);
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+										/*after all process come*/
+struct node * tempBurst;
+int waitTime=0,TotalaWaitTime=0;
+	float TWT=0;
+for (int timer = 0; timer <= TotalBurstTime; timer++) {
+        for (int u = 1; u <= count0; u++) {
+            if (temp->priority == timer && temp->flag==false) {
+            		if (temp->Burst<=0)
+            	{
+            		temp->flag==true;
+				}
+				waitTime=clock-temp->arrival;
+				if(temp->process==finalprocess && temp->wt==finalwt)//to countinue with prviuos waiting 
+																	//time with last process if its come first
+				{
+					waitTime=finalwt;
+				}
+            	printf("\n waitTime = time %d - arrival %d = %d \n",clock,temp->arrival,waitTime);
+            	
+        	if(waitTime<0)//to prevent the negative result
+        	{
+					waitTime=0;
+			}
+				printf("process arrival [%d] <=? timer[%d]\n",temp->arrival,clock);
+				printf("temp wt : %d + waittime %d",temp->wt,waitTime);
+            	temp->wt=waitTime;//save waiting time in process
+            	if(temp->wt<0) temp->wt=0;
+            	
+                printf("\n<<process[%d] at time[%d] buratTime[%d] arrivalTime[%d] pri[%d]\twait[%d]\n",temp->process,clock,temp->Burst,temp->arrival,temp->priority,temp->wt);
+                clock +=temp->Burst;
+                TotalaWaitTime+=waitTime;
+                printf("\n\tTime>>%d > Timer>>%d\t\n",clock,timer);
+                temp->completeTime=clock;
+                temp->tat=temp->completeTime-temp->arrival;
+                temp->wt=FindWt(temp,LL,temp->process,temp->tat);
+                	TWT+=temp->wt;
+            }
+
+            temp = temp->next;
+        }
+        temp = header;
+		}
+	
+									/*show result*/
+header=ProcessBurstBubbleSort(header);
+system("@cls||clear");
+printf("\t+------------------------------------------------------+\n");
+printf("\t¦Scheduling Method: Priority Scheduling –Preemptive¦\n");
+printf("\t+--------------------------------------------------------+\n");
+printf("\nprocess\twatitngTime\n\n");
+		displayResult(header);
+		
+		printf("\n\n\033[0;32mAverage Waiting Time:  :%f ms\033[0m\n\n",TWT/count0);
+///////////////////////////////////////
+q=fopen(outputFile,"a");
+    fprintf(q, "Priority Scheduling –Preemptive\n");
+        displayResult2(header,q);
+    fprintf(q, "Average Waiting Time:  :%f ms\n", TWT/count0);
+    fclose(q);
+////////////////////////////////////////////
+		int back=1;
+		while(back)
+{
+	printf("\n\n\nEnter 0 to Back to the menue >>>>");
+scanf("%d",&back);
+}
+system("@cls||clear");
+logo1();
+
+	return 0;
+}
+
+struct node* Create(int process,int Burst,int arrival)
+{
+	struct node * temp;
+	temp=(struct node*) malloc(sizeof(struct node));
+	temp->process=process;
+	temp->Burst=Burst;
+	temp->arrival=arrival;
+	temp->next=NULL;
+	return temp;
+
+}
+
+struct node* CreateWithpriority(int process,int Burst,int arrival,int priority)
+{
+	struct node * temp;
+	temp=(struct node*) malloc(sizeof(struct node));
+	temp->process=process;
+	temp->Burst=Burst;
+	temp->arrival=arrival;
+	temp->priority=priority;
+	temp->next=NULL;
+	return temp;
+
+}
+
+
+void display(struct node* temp)
+{
+	while(temp!=NULL)
+	{
+			printf("%d ",temp->process);
+			printf("%d  ",temp->Burst);
+			printf("%d  ",temp->arrival);
+			printf("----->\n");
+	temp=temp->next;
+	}
+
+}
+
+void displayResult(struct node* temp)
+{
+	while(temp!=NULL)
+	{
+			printf("P%d ",temp->process);
+			printf("waitTime [%d] ",temp->wt);
+			printf("\n");
+	temp=temp->next;
+	}
+
+}
+
+void displayResult2(struct node* temp,FILE *q)
+{
+	//q=fopen(outputFile,"a");
+	    fprintf(q, "\nprocess\twatitngTime\n");
+	while(temp!=NULL)
+	{	
+			fprintf(q,"P%d ",temp->process);
+			fprintf(q,"waitTime [%d] ",temp->wt);
+			fprintf(q,"\n");
+	temp=temp->next;
+	}
+
+}
+
+struct node* insertBack(struct node *header,int process,int Burst,int arrival)
+{
+			struct node* newNode=Create(process,Burst,arrival);
+			struct node *temp;
+			if (header==NULL)
+			{
+						header = newNode;
+						return header;
+			}
+			temp=header;
+				while(temp->next != NULL)
+					{
+						temp=temp->next;
+					}
+					temp->next = newNode;
+					
+			return header;
+}
+
+int  countlinklist(struct node* temp)
+{
+		int count=0;
+		while(temp!=NULL)
+		{
+			count++;
+		temp=temp->next;
+		}
+		return count;
+}
+
+struct node * priorityBubbleSort(struct node* header)
+{
+	struct node *lastnode ,*currentNode ,*nextNode;
+	int tempProcess,tempBurst,tempArrival,tempWait,tempPriority;
+	
+	for (lastnode=NULL; lastnode!=header->next; lastnode=currentNode)
+	{
+		for (currentNode=header; currentNode->next!=lastnode ;currentNode=currentNode->next)
+		{
+			nextNode=currentNode->next;
+			if (currentNode->priority > nextNode->priority )
+			{
+				tempProcess=currentNode->process;
+				tempBurst=currentNode->Burst;
+				tempArrival=currentNode->arrival;
+				tempPriority=currentNode->priority;
+				
+				currentNode->process=nextNode->process;
+				currentNode->Burst=nextNode->Burst;
+				currentNode->arrival=nextNode->arrival;
+				currentNode->priority=nextNode->priority;
+				
+				nextNode->process=tempProcess;
+				nextNode->Burst=tempBurst;
+				nextNode->arrival=tempArrival;	
+				nextNode->priority=tempPriority;
+			}
+//			if (currentNode->Burst == nextNode->Burst && currentNode->arrival > nextNode->arrival)
+//			{
+//				tempProcess=currentNode->process;
+//				tempBurst=currentNode->Burst;
+//				tempArrival=currentNode->arrival;
+//				
+//				currentNode->process=nextNode->process;
+//				currentNode->Burst=nextNode->Burst;
+//				currentNode->arrival=nextNode->arrival;
+//				
+//				nextNode->process=tempProcess;
+//				nextNode->Burst=tempBurst;
+//				nextNode->arrival=tempArrival;	
+//			}
+		}
+		
+	}
+	return header;
+
+}
+
+struct node* insertBack2(struct node *header,int process,int Burst,int arrival,int priority)
+{
+			struct node* newNode=CreateWithpriority(process,Burst,arrival,priority);
+			struct node *temp;
+			if (header==NULL)
+			{
+						header = newNode;
+						return header;
+			}
+			temp=header;
+				while(temp->next != NULL)
+					{
+						temp=temp->next;
+					}
+					temp->next = newNode;
+					
+			return header;
+}
+
+
+void displaywithPriority(struct node* temp)
+{
+	while(temp!=NULL)
+	{
+			printf("%d ",temp->process);
+			printf("%d  ",temp->Burst);
+			printf("%d  ",temp->arrival);
+			printf("%d  ",temp->priority);
+			printf("----->\n");
+	temp=temp->next;
+	}
+
+}
+
+struct node * ArrivalBubbleSort(struct node* header)
+{
+	struct node *lastnode ,*currentNode ,*nextNode;
+	int tempProcess,tempBurst,tempArrival,tempWait;
+	
+	for (lastnode=NULL; lastnode!=header->next; lastnode=currentNode)
+	{
+		for (currentNode=header; currentNode->next!=lastnode ;currentNode=currentNode->next)
+		{
+			nextNode=currentNode->next;
+			if (currentNode->arrival > nextNode->arrival )
+			{
+				tempProcess=currentNode->process;
+				tempBurst=currentNode->Burst;
+				tempArrival=currentNode->arrival;
+				
+				currentNode->process=nextNode->process;
+				currentNode->Burst=nextNode->Burst;
+				currentNode->arrival=nextNode->arrival;
+				
+				nextNode->process=tempProcess;
+				nextNode->Burst=tempBurst;
+				nextNode->arrival=tempArrival;	
+			}
+		}
+		
+	}
+	return header;
+
+}
+
+
+int findMinarrivalTime(struct node* temp,int maxArrivalAime)
+{
+	int minarr=maxArrivalAime;
+	while(temp!=NULL)
+	{
+		if (temp->arrival<minarr)
+			minarr=temp->arrival;
+		temp=temp->next;
+	}
+	return minarr;
+}
+
+struct node * BurstBubbleSort(struct node* header)
+{
+	struct node *lastnode ,*currentNode ,*nextNode;
+	int tempProcess,tempBurst,tempArrival,tempWait;
+	
+	for (lastnode=NULL; lastnode!=header->next; lastnode=currentNode)
+	{
+		for (currentNode=header; currentNode->next!=lastnode ;currentNode=currentNode->next)
+		{
+			nextNode=currentNode->next;
+			if (currentNode->Burst > nextNode->Burst )
+			{
+				tempProcess=currentNode->process;
+				tempBurst=currentNode->Burst;
+				tempArrival=currentNode->arrival;
+				
+				currentNode->process=nextNode->process;
+				currentNode->Burst=nextNode->Burst;
+				currentNode->arrival=nextNode->arrival;
+				
+				nextNode->process=tempProcess;
+				nextNode->Burst=tempBurst;
+				nextNode->arrival=tempArrival;	
+			}
+//			if (currentNode->Burst == nextNode->Burst && currentNode->arrival > nextNode->arrival)
+//			{
+//				tempProcess=currentNode->process;
+//				tempBurst=currentNode->Burst;
+//				tempArrival=currentNode->arrival;
+//				
+//				currentNode->process=nextNode->process;
+//				currentNode->Burst=nextNode->Burst;
+//				currentNode->arrival=nextNode->arrival;
+//				
+//				nextNode->process=tempProcess;
+//				nextNode->Burst=tempBurst;
+//				nextNode->arrival=tempArrival;	
+//			}
+		}
+		
+	}
+	return header;
+
+}
+
+struct node * ProcessBurstBubbleSort(struct node* header)
+{
+	struct node *lastnode ,*currentNode ,*nextNode;
+	int tempProcess,tempBurst,tempArrival,tempWait;
+	
+	for (lastnode=NULL; lastnode!=header->next; lastnode=currentNode)
+	{
+		for (currentNode=header; currentNode->next!=lastnode ;currentNode=currentNode->next)
+		{
+			nextNode=currentNode->next;
+			if (currentNode->process > nextNode->process )
+			{
+				tempProcess=currentNode->process;
+				tempBurst=currentNode->Burst;
+				tempArrival=currentNode->arrival;
+				tempWait=currentNode->wt;
+				
+				currentNode->process=nextNode->process;
+				currentNode->Burst=nextNode->Burst;
+				currentNode->arrival=nextNode->arrival;
+				currentNode->wt = nextNode->wt;
+				
+				nextNode->process=tempProcess;
+				nextNode->Burst=tempBurst;
+				nextNode->arrival=tempArrival;	
+				nextNode->wt =tempWait;
+			}
+		}
+		
+	}
+	return header;
+
+}
+
+struct node* ReadFile(FILE *f,int *maxarr,int *TotalBurstTime,int *process1)
+{
+	int process0=1;
+	struct node *temp=NULL; 
+		int process,Burst,arrival,priority;
+
+char arr[100];
+char bu[100];
+char pri[100];
+char c;
+int j,k,i=1,count=1;
+    if (f == NULL) {
+        perror("Error opening file");
+        exit(1);
+    }
+	   while (1) {
+        int c = fgetc(f);
+
+        if (c == EOF) {
+            break;  
+        }
+
+        if (c == ':') {
+            continue;
+        }
+
+        char bu[10000],arr[10000],pri[10000];
+        int count = 0;
+
+        while (c != ':' && c != EOF) {
+            bu[count++] = c;
+            c = fgetc(f);
+        }
+		c=fgetc(f);
+        bu[count] = '\0'; 
+        
+        sscanf(bu, "%d", &Burst);
+        *TotalBurstTime+=Burst;
+        // Read the second number (arrival time)
+        count = 0;
+        while (c != ':' && c != EOF) {
+            arr[count++] = c;
+            c = fgetc(f);
+        }
+        arr[count] = '\0';
+        sscanf(arr, "%d", &arrival);
+        if(arrival>*maxarr)
+        {
+        	*maxarr=arrival;
+		}
+       	c=fgetc(f);
+		//read Priority
+		count=0;
+        while (c != '\n' && c != EOF) {
+        	pri[count++] = c;
+            c = fgetc(f);
+        }
+        pri[count] = '\0';
+        sscanf(pri, "%d", &priority);
+temp=insertBack2(temp,process0,Burst,arrival,priority);
+
+        process++;
+        process0 ++;
+    }
+    *process1=process0;
+    fclose(f);
+    return temp;
+}
+
+struct node* ReadFile2(FILE *f,int *maxarr,int *TotalBurstTime)
+{
+	struct node *temp=NULL; 
+		int process,Burst,arrival;
+int process0=1;
+char arr[100];
+char bu[100];
+char c;
+int j,k,i=1,count=1;
+    if (f == NULL) {
+        perror("Error opening file");
+        exit(1);
+    }
+	   while (1) {
+        int c = fgetc(f);
+
+        if (c == EOF) {
+            break;  
+        }
+
+        if (c == ':') {
+            continue;
+        }
+
+        char bu[10000],arr[10000];
+        int count = 0;
+
+        while (c != ':' && c != EOF) {
+            bu[count++] = c;
+            c = fgetc(f);
+        }
+		c=fgetc(f);
+        bu[count] = '\0'; 
+        
+        sscanf(bu, "%d", &Burst);
+        *TotalBurstTime+=Burst;
+        // Read the second number (arrival time)
+        count = 0;
+        while (c != ':' && c != EOF) {
+            arr[count++] = c;
+            c = fgetc(f);
+        }
+        arr[count] = '\0';
+        sscanf(arr, "%d", &arrival);
+        if(arrival>*maxarr)
+        {
+        	*maxarr=arrival;
+		}
+        while (c != '\n' && c != EOF) {
+            c = fgetc(f);
+        }
+temp=insertBack(temp,process0,Burst,arrival);
+
+        process++;
+        process0 ++;
+    }
+    fclose(f);
+    return temp;
+}
+
+int FindWt(struct node* header,struct node *LL,int key,int tat)
+{
+	
+	while(LL->process!=key)
+	{
+		LL=LL->next;
+	}
+	int wt= tat - LL->Burst;
+	return wt;
+}
+
+
