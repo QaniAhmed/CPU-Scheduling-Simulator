@@ -11,7 +11,10 @@ struct node {
 	int arrival;
 	int wt;
 	bool done=false;
-	
+	bool flag=false;
+	bool first=false;
+	int completeTime;
+	int tat;
 	struct node * next;
 };
 struct node* Create(int process,int Burst,int arrival)
@@ -257,6 +260,77 @@ temp=insertBack(temp,process0,Burst,arrival);
     fclose(f);
     return temp;
 }
+struct node* ReadFile2(FILE *f,int *maxarr,int *TotalBurstTime)
+{
+	struct node *temp=NULL; 
+		int process,Burst,arrival;
+int process0=1;
+char arr[100];
+char bu[100];
+char c;
+int j,k,i=1,count=1;
+    if (f == NULL) {
+        perror("Error opening file");
+        exit(1);
+    }
+	   while (1) {
+        int c = fgetc(f);
+
+        if (c == EOF) {
+            break;  
+        }
+
+        if (c == ':') {
+            continue;
+        }
+
+        char bu[10000],arr[10000];
+        int count = 0;
+
+        while (c != ':' && c != EOF) {
+            bu[count++] = c;
+            c = fgetc(f);
+        }
+		c=fgetc(f);
+        bu[count] = '\0'; 
+        
+        sscanf(bu, "%d", &Burst);
+        *TotalBurstTime+=Burst;
+        // Read the second number (arrival time)
+        count = 0;
+        while (c != ':' && c != EOF) {
+            arr[count++] = c;
+            c = fgetc(f);
+        }
+        arr[count] = '\0';
+        sscanf(arr, "%d", &arrival);
+        if(arrival>*maxarr)
+        {
+        	*maxarr=arrival;
+		}
+        while (c != '\n' && c != EOF) {
+            c = fgetc(f);
+        }
+temp=insertBack(temp,process0,Burst,arrival);
+
+        process++;
+        process0 ++;
+    }
+    fclose(f);
+    return temp;
+}
+int FindWt(struct node* header,struct node *LL,int key,int tat)
+{
+	
+	while(LL->process!=key)
+	{
+		LL=LL->next;
+	}
+	int wt= tat - LL->Burst;
+	return wt;
+}
+int sjfPreeptive(char* inputFile);
+
 char inputFile[100],outputFile[100];
 void Read(char IOpath[] );
 void logo();
@@ -267,7 +341,7 @@ int sjfNonpreeptive(char * inputFile);
 int main(int argc ,char * argv[])
 {
 	
-	
+	bool methodCheck=false;
 	int option=0;
 	char*inputFile=NULL,*outputFile=NULL;
 	while((option=getopt(argc,argv,"f:o:"))!=-1){
@@ -305,11 +379,12 @@ int main(int argc ,char * argv[])
 				 	exit(1);
 				 }
 int choise;
+bool preemethod=false;
 printf("\n\n\n");
 system("@cls||clear");
 logo();
 bool end =false;
-char schedulingMethod [100]="none",Preemptivemethod [100]="Preemptive";             
+char schedulingMethod [100]="none",Preemptivemethod [100]="\033[0;32mNon-Preemptive(Default)\033[0m";             
 while (end==false){                                                                                                                                                                                                                                                      
 printf("\n1)Scheduling Method(%s)\n2)Preemptive Mode(%s)\n3)Show Result\n4)End Program\nOption>",schedulingMethod,Preemptivemethod);
 scanf("%d",&choise);
@@ -371,11 +446,13 @@ switch (choise)
 		printf("(1) Preemptive\n(2) Non-Preemptive(Default)\n(3)Back\n>>>");
 		scanf("%d",&method);
 		
-		if (method==2)
+		
+		if (method==1)
 		{
-			system("@cls||clear");
-			strcpy(Preemptivemethod,"Non-Preemptive");
+			//system("@cls||clear");
+			strcpy(Preemptivemethod,"\033[0;32mPreemptive\033[0m");
 			printf("\n>> you selcted method: %d,press back <<\n",method);
+			preemethod=true;
 			//break;
 		}
 	}
@@ -383,13 +460,29 @@ switch (choise)
 	logo1();
 	break;
 	case 3:
-		printf("%d",methodSelected);
-		if (methodSelected==0)
-				printf("\033[0;31m\nSelect a method first !\n\033[0m");
- 			else if(methodSelected==1)
-				FCFS(inputFile);
-			else if(methodSelected==2)
+		switch(methodSelected)
+		{
+			case 1: 
+			FCFS(inputFile);
+			break;
+			case 2 :
+				if(methodSelected==2&&preemethod==false)
 			sjfNonpreeptive(inputFile);
+			else if(methodSelected==2&&preemethod==true)
+			sjfPreeptive(inputFile);
+			break;
+			default:
+				printf("\033[0;31m\nSelect a method first !\n\033[0m");
+		}
+//		printf("%d",methodSelected);
+//		if (methodSelected==0)
+//				printf("\033[0;31m\nSelect a method first !\n\033[0m");
+// 			else if(methodSelected==1)
+//				FCFS(inputFile);
+//			else if(methodSelected==2&&preemethod==false)
+//			sjfNonpreeptive(inputFile);
+//			else if(methodSelected==2&&preemethod==true)
+//			sjfPreeptive(inputFile);
 				
 	break;
 
@@ -476,19 +569,23 @@ for (int timer = minarr; timer <= maxarr; timer++) {
             if (temp->arrival == timer) {
             	waitTime=time-temp->arrival;
             	printf("\n waitTime = time %d - arrival %d = %d \n",time,temp->arrival,waitTime);
-									//the first itreation
-            	if(waitTime<0)
+            	
+            	if(waitTime<0)//to prevent the negative result
             	{
 				waitTime=0;
-				//time++;
+				time++;
 				}
-            	temp->wt=waitTime;
+	
+				            	printf("process arrival [%d] <=? timer[%d]\n",temp->arrival,timer);
+            	temp->wt=waitTime;//save waiting time in process
                 	printf("\n<<process[%d] at time[%d] buratTime[%d] arrivalTime[%d] \twait[%d]\n",temp->process,timer,temp->Burst,temp->arrival,temp->wt);
                 		time +=temp->Burst;
                 TotalaWaitTime+=waitTime;
-                printf("\n\tTime>>%d\t\n",time);
+                printf("\n\tTime>>%d > Timer>>%d\t\n",time,timer);
                 done++;
+                //temp=header;
             }
+
             temp = temp->next;
         }
         temp = header;
@@ -498,7 +595,7 @@ for (int timer = minarr; timer <= maxarr; timer++) {
 																		     	
 system("@cls||clear");
 printf("\t+------------------------------------------------------+\n");
-printf("\t¦Scheduling Method: Shortest Job First – Non-Preemptive¦\n");
+printf("\t¦Scheduling Method: First come first served¦\n");
 printf("\t+--------------------------------------------------------+\n");
 printf("\nprocess\twatitngTime\n\n");
 displayResult(header);
@@ -593,6 +690,130 @@ system("@cls||clear");
 logo1();
 
 	return 0;
+}
+
+
+int sjfPreeptive(char* inputFile)
+{
+		struct node * RQ=NULL;
+	int maxarr=0,minarr,TotalBurstTime=0;
+	struct node * head;
+struct node *header=NULL;
+	FILE *f;
+f=fopen(inputFile,"r"); 
+struct node * LL=NULL;
+    header=ReadFile2(f,&maxarr,&TotalBurstTime);
+    f=fopen(inputFile,"r"); 
+    LL=ReadFile2(f,&maxarr,&TotalBurstTime);
+	minarr=findMinarrivalTime(header,maxarr);
+	display(header);
+	int count0=countlinklist(header);
+	int realtime=0;
+	BurstBubbleSort(header);
+	display(header);
+	struct node * temp;
+	temp=header;
+int timer,finalprocess,finalwt;
+int clock=0;
+
+											/*before all process come*/
+	for (timer=1;timer<=maxarr ;timer++)
+	{
+		for (int u = 1; u <= count0 ; u++) 
+			{
+				if (temp->arrival <= clock &&temp->flag!=true  ) //flag ==completed
+				     {
+				    
+				     
+							
+				     		temp->Burst--;//subtract burst time
+						 if (temp->first==false)//to take just the first wait time
+						 {
+						 	temp->wt=clock-temp->arrival;
+						 	temp->first=true;
+						 }
+						 printf("\n<<process[%d] at clock[%d] buratTime[%d] arrivalTime[%d] \twaittime[%d]\t\n",temp->process,clock,temp->Burst,temp->arrival,temp->wt);
+
+				 
+				            if (temp->Burst<=0)
+				     			temp->flag=true;
+						 BurstBubbleSort(header);
+						 clock++;
+				            break;
+				     }
+				     
+				     temp=temp->next;
+		}
+		//clock++;
+		temp=header;
+	}	
+finalprocess=temp->process;
+finalwt=temp->wt;
+	display(header);
+	BurstBubbleSort(header);
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+										/*after all process come*/
+struct node * tempBurst;
+int waitTime=0,TotalaWaitTime=0;
+	float TWT=0;
+for (int timer = 0; timer <= TotalBurstTime; timer++) {
+        for (int u = 1; u <= count0; u++) {
+            if (temp->Burst == timer && temp->flag==false) {
+            		if (temp->Burst<=0)
+            	{
+            		temp->flag==true;
+				}
+				waitTime=clock-temp->arrival;
+				if(temp->process==finalprocess && temp->wt==finalwt)//to countinue with prviuos waiting 
+																	//time with last process if its come first
+				{
+					waitTime=finalwt;
+				}
+            	printf("\n waitTime = time %d - arrival %d = %d \n",clock,temp->arrival,waitTime);
+            	
+        	if(waitTime<0)//to prevent the negative result
+        	{
+					waitTime=0;
+			}
+				printf("process arrival [%d] <=? timer[%d]\n",temp->arrival,clock);
+				printf("temp wt : %d + waittime %d",temp->wt,waitTime);
+            	temp->wt=waitTime;//save waiting time in process
+            	if(temp->wt<0) temp->wt=0;
+            	
+                printf("\n<<process[%d] at time[%d] buratTime[%d] arrivalTime[%d] \twait[%d]\n",temp->process,clock,temp->Burst,temp->arrival,temp->wt);
+                clock +=temp->Burst;
+                TotalaWaitTime+=waitTime;
+                printf("\n\tTime>>%d > Timer>>%d\t\n",clock,timer);
+                temp->completeTime=clock;
+                temp->tat=temp->completeTime-temp->arrival;
+                temp->wt=FindWt(temp,LL,temp->process,temp->tat);
+                	TWT+=temp->wt;
+            }
+
+            temp = temp->next;
+        }
+        temp = header;
+		}
 	
+									/*show result*/
+system("@cls||clear");
+printf("\t+------------------------------------------------------+\n");
+printf("\t¦Scheduling Method: Shortest Job First –Preemptive¦\n");
+printf("\t+--------------------------------------------------------+");
+printf("\nprocess\twatitngTime\n\n");
+		displayResult(header);
+		
+		printf("\n\033[0;32mAverage Waiting Time:  :%f ms\033[0m\n",TWT/count0);
+		int back=true;
+		while(back)
+{
+	printf("\n\n\nEnter 0 to Back to the menue >>>>");
+scanf("%d",&back);
+}
+system("@cls||clear");
+logo1();
+return 0 ;
+////////////////////////////////////////////////////////////////////
 }
 
