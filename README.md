@@ -1,7 +1,7 @@
 
 # CPU Scheduling Simulator
 
-This application is a **CPU Scheduling Simulator** implemented in C++. It allows users to simulate and analyze different CPU scheduling algorithms using process data from input files. The program calculates key metrics such as **waiting time, turnaround time, and completion time** for each process.
+This application is a **CPU Scheduling Simulator** implemented in C++. It allows users to simulate and analyze different CPU scheduling algorithms. The program calculates key metrics such as **waiting time, turnaround time, and completion time** for each process.
 
 
 <img width="1473" height="706" alt="image" src="https://github.com/user-attachments/assets/eea46f8d-b801-446b-adb8-f7adddb4168a" />
